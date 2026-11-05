@@ -93,13 +93,19 @@ const generatedGuestUrl = computed(() => {
   const base = window.location.origin + window.location.pathname
   const trimmed = inputGuestName.value.trim()
   if (!trimmed) return base
+  // Use clean encoded parameter without spaces so chat apps keep link intact
   return `${base}?to=${encodeURIComponent(trimmed)}`
+})
+
+const fullInvitationMessage = computed(() => {
+  const name = inputGuestName.value.trim() || 'ភ្ញៀវកិត្តិយស'
+  const link = generatedGuestUrl.value
+  return `🌟 សំបុត្រគោរពអញ្ជើញ VIP GALA NIGHT 🌟\n\nសូមគោរពអញ្ជើញ៖ ${name}\nចូលរួមពិធីបើកសម្ពោធជាផ្លូវការ SL CLUB Battambang\nកាលបរិច្ឆេទ៖ ថ្ងៃចន្ទ ទី ០៩ ខែ វិច្ឆិកា ឆ្នាំ ២០២៦ វេលាម៉ោង ៧:០០ យប់\n\n👉 សូមចុចលើ Link ខាងក្រោមនេះដើម្បីបើកមើលសំបុត្រអញ្ជើញ៖\n${link}`
 })
 
 function applyAndPreviewName() {
   if (inputGuestName.value.trim()) {
     guestName.value = inputGuestName.value.trim()
-    // Update browser URL without reloading page
     if (window.history && window.history.replaceState) {
       const newUrl = `${window.location.pathname}?to=${encodeURIComponent(guestName.value)}`
       window.history.replaceState(null, '', newUrl)
@@ -108,13 +114,31 @@ function applyAndPreviewName() {
   closeNameModal()
 }
 
+const copiedMessageSuccess = ref(false)
+
+function copyFullMessage() {
+  const text = fullInvitationMessage.value
+  navigator.clipboard.writeText(text).then(() => {
+    copiedMessageSuccess.value = true
+    setTimeout(() => { copiedMessageSuccess.value = false }, 2500)
+  }).catch(() => {
+    const input = document.createElement('textarea')
+    input.value = text
+    document.body.appendChild(input)
+    input.select()
+    document.execCommand('copy')
+    document.body.removeChild(input)
+    copiedMessageSuccess.value = true
+    setTimeout(() => { copiedMessageSuccess.value = false }, 2500)
+  })
+}
+
 function copyGuestLink() {
   if (!generatedGuestUrl.value) return
   navigator.clipboard.writeText(generatedGuestUrl.value).then(() => {
     copiedSuccess.value = true
     setTimeout(() => { copiedSuccess.value = false }, 2500)
   }).catch(() => {
-    // Fallback if clipboard API restricted
     const input = document.createElement('input')
     input.value = generatedGuestUrl.value
     document.body.appendChild(input)
@@ -129,8 +153,22 @@ function copyGuestLink() {
 function shareViaTelegram() {
   const url = encodeURIComponent(generatedGuestUrl.value)
   const name = inputGuestName.value.trim() || 'ភ្ញៀវកិត្តិយស'
-  const text = encodeURIComponent(`សូមគោរពអញ្ជើញ ${name} ចូលរួមពិធីបើកសម្ពោធជាផ្លូវការ SL CLUB VIP GALA ថ្ងៃទី ០៩ វិច្ឆិកា ២០២៦`)
+  const text = encodeURIComponent(`🌟 សំបុត្រគោរពអញ្ជើញ VIP GALA NIGHT 🌟\n\nសូមគោរពអញ្ជើញ ${name} ចូលរួមពិធីបើកសម្ពោធជាផ្លូវការ SL CLUB ថ្ងៃទី ០៩ វិច្ឆិកា ២០២៦\n\n👉 ចុចទីនេះដើម្បីបើកមើលសំបុត្រអញ្ជើញ៖`)
   window.open(`https://t.me/share/url?url=${url}&text=${text}`, '_blank')
+}
+
+// Native Mobile Share API (Share directly to Messenger, SMS, WhatsApp, etc.)
+function nativeShare() {
+  const name = inputGuestName.value.trim() || 'ភ្ញៀវកិត្តិយស'
+  if (navigator.share) {
+    navigator.share({
+      title: `SL CLUB - សំបុត្រគោរពអញ្ជើញ ${name}`,
+      text: `សូមគោរពអញ្ជើញ ${name} ចូលរួមពិធីបើកសម្ពោធជាផ្លូវការ SL CLUB VIP GALA ថ្ងៃទី ០៩ វិច្ឆិកា ២០២៦`,
+      url: generatedGuestUrl.value
+    }).catch(() => {})
+  } else {
+    shareViaTelegram()
+  }
 }
 
 function scrollToCountdown() {
@@ -625,42 +663,76 @@ onUnmounted(() => {
             </div>
           </div>
 
-          <!-- Action Buttons -->
-          <div class="flex flex-col sm:flex-row items-center gap-3 pt-2">
-            <!-- Copy Link Button -->
+          <!-- Action Buttons Grid -->
+          <div class="flex flex-col gap-2.5 pt-1">
+            <!-- Share Options (One-Tap Direct Clickable Sharing) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <!-- Share to Telegram -->
+              <button
+                @click="shareViaTelegram"
+                type="button"
+                class="flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs sm:text-sm shadow-md transition-all cursor-pointer"
+                title="ផ្ញើទៅកាន់ Telegram (ភ្ញៀវចុចមួយតង់បើកភ្លាម)"
+              >
+                <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.75-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/>
+                </svg>
+                <span>ផ្ញើតាម Telegram</span>
+              </button>
+
+              <!-- Native Mobile Share (Messenger, WhatsApp, SMS) -->
+              <button
+                @click="nativeShare"
+                type="button"
+                class="flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs sm:text-sm shadow-md transition-all cursor-pointer"
+                title="ផ្ញើតាម Messenger, SMS ឬកម្មវិធីទូរស័ព្ទផ្សេងៗ"
+              >
+                <span class="material-symbols-outlined text-base">share</span>
+                <span>ផ្ញើតាម Messenger / SMS</span>
+              </button>
+            </div>
+
+            <!-- Copy Full Formatted Message Button -->
             <button
-              @click="copyGuestLink"
+              @click="copyFullMessage"
               type="button"
-              class="w-full sm:flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black font-bold text-xs sm:text-sm shadow-lg shadow-amber-400/20 transition-all cursor-pointer"
+              class="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black font-bold text-xs sm:text-sm shadow-lg shadow-amber-400/20 transition-all cursor-pointer"
             >
               <span class="material-symbols-outlined text-base">
-                {{ copiedSuccess ? 'check_circle' : 'content_copy' }}
+                {{ copiedMessageSuccess ? 'check_circle' : 'chat' }}
               </span>
-              <span>{{ copiedSuccess ? 'បានចម្លង Link រួចរាល់!' : 'ចម្លង Link (Copy Link)' }}</span>
+              <span>{{ copiedMessageSuccess ? 'បានចម្លងសារអញ្ជើញពេញលេញ!' : 'ចម្លងសារអញ្ជើញទាំងមូល (Copy Full Message)' }}</span>
             </button>
 
-            <!-- Share to Telegram -->
-            <button
-              @click="shareViaTelegram"
-              type="button"
-              class="w-full sm:w-auto flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs sm:text-sm shadow-md transition-all cursor-pointer"
-              title="ផ្ញើទៅកាន់ Telegram"
-            >
-              <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.75-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/>
-              </svg>
-              <span>ផ្ញើតាម Telegram</span>
-            </button>
+            <!-- Copy Link Only Button -->
+            <div class="flex items-center justify-between px-1 pt-1">
+              <button
+                @click="copyGuestLink"
+                type="button"
+                class="text-xs text-slate-300 hover:text-amber-300 flex items-center gap-1 transition-colors cursor-pointer"
+              >
+                <span class="material-symbols-outlined text-sm">link</span>
+                <span>{{ copiedSuccess ? 'បានចម្លង Link រួច!' : 'ចម្លងតែ Link សុទ្ធ' }}</span>
+              </button>
+
+              <button
+                @click="applyAndPreviewName"
+                type="button"
+                class="text-xs text-slate-400 hover:text-white flex items-center gap-1 transition-colors cursor-pointer"
+              >
+                <span class="material-symbols-outlined text-sm">visibility</span>
+                <span>មើលសាកល្បងលើកាត</span>
+              </button>
+            </div>
           </div>
 
-          <!-- Preview on Card Button -->
-          <button
-            @click="applyAndPreviewName"
-            type="button"
-            class="text-xs text-center text-slate-400 hover:text-white transition-colors cursor-pointer py-1"
-          >
-            មើលសាកល្បងលើលិខិតអញ្ជើញភ្លាមៗ (Preview on Card)
-          </button>
+          <!-- Helpful note for Elderly Guests -->
+          <div class="flex items-start gap-2 p-3 rounded-xl bg-amber-400/10 border border-amber-400/20 text-[11px] text-amber-200/90 leading-relaxed">
+            <span class="material-symbols-outlined text-base text-amber-400 shrink-0">info</span>
+            <span>
+              <strong>ងាយស្រួលបំផុតសម្រាប់ចាស់ៗ៖</strong> នៅពេលអ្នកផ្ញើសារ ឬ Link នេះទៅ ភ្ញៀវគ្រាន់តែយកដៃចុច <strong>(Tap) លើ Link ឬរូបភាព Banner មួយតង់</strong> វានឹងបើកលិខិតអញ្ជើញដែលមានឈ្មោះគាត់ភ្លាមៗ ដោយមិនបាច់ Copy ឬ Paste ចូល Browser ឡើយ!
+            </span>
+          </div>
         </div>
       </div>
     </Transition>
