@@ -59,6 +59,80 @@ const khmerHours = computed(() => toKhmerNum(formattedHours.value))
 const khmerMinutes = computed(() => toKhmerNum(formattedMinutes.value))
 const khmerSeconds = computed(() => toKhmerNum(formattedSeconds.value))
 
+// --- VIP Guest Name Management (via URL ?to=... or ?name=...) ---
+const guestName = ref('')
+const isNameModalOpen = ref(false)
+const inputGuestName = ref('')
+const copiedSuccess = ref(false)
+
+function loadGuestName() {
+  if (typeof window === 'undefined') return
+  try {
+    const params = new URLSearchParams(window.location.search)
+    const nameParam = params.get('to') || params.get('name') || params.get('guest')
+    if (nameParam && nameParam.trim()) {
+      guestName.value = nameParam.trim()
+      document.title = `SL CLUB - សំបុត្រគោរពអញ្ជើញ ${guestName.value}`
+    }
+  } catch (err) {
+    console.warn("Could not read URL parameter:", err)
+  }
+}
+
+function openNameModal() {
+  inputGuestName.value = guestName.value || ''
+  isNameModalOpen.value = true
+}
+
+function closeNameModal() {
+  isNameModalOpen.value = false
+}
+
+const generatedGuestUrl = computed(() => {
+  if (typeof window === 'undefined') return ''
+  const base = window.location.origin + window.location.pathname
+  const trimmed = inputGuestName.value.trim()
+  if (!trimmed) return base
+  return `${base}?to=${encodeURIComponent(trimmed)}`
+})
+
+function applyAndPreviewName() {
+  if (inputGuestName.value.trim()) {
+    guestName.value = inputGuestName.value.trim()
+    // Update browser URL without reloading page
+    if (window.history && window.history.replaceState) {
+      const newUrl = `${window.location.pathname}?to=${encodeURIComponent(guestName.value)}`
+      window.history.replaceState(null, '', newUrl)
+    }
+  }
+  closeNameModal()
+}
+
+function copyGuestLink() {
+  if (!generatedGuestUrl.value) return
+  navigator.clipboard.writeText(generatedGuestUrl.value).then(() => {
+    copiedSuccess.value = true
+    setTimeout(() => { copiedSuccess.value = false }, 2500)
+  }).catch(() => {
+    // Fallback if clipboard API restricted
+    const input = document.createElement('input')
+    input.value = generatedGuestUrl.value
+    document.body.appendChild(input)
+    input.select()
+    document.execCommand('copy')
+    document.body.removeChild(input)
+    copiedSuccess.value = true
+    setTimeout(() => { copiedSuccess.value = false }, 2500)
+  })
+}
+
+function shareViaTelegram() {
+  const url = encodeURIComponent(generatedGuestUrl.value)
+  const name = inputGuestName.value.trim() || 'ភ្ញៀវកិត្តិយស'
+  const text = encodeURIComponent(`សូមគោរពអញ្ជើញ ${name} ចូលរួមពិធីបើកសម្ពោធជាផ្លូវការ SL CLUB VIP GALA ថ្ងៃទី ០៩ វិច្ឆិកា ២០២៦`)
+  window.open(`https://t.me/share/url?url=${url}&text=${text}`, '_blank')
+}
+
 function scrollToCountdown() {
   const el = document.getElementById('teaser-countdown')
   if (el) {
@@ -75,6 +149,7 @@ function openTelegram() {
 }
 
 onMounted(() => {
+  loadGuestName()
   updateCountdown()
   timerId = setInterval(updateCountdown, 1000)
 })
@@ -107,9 +182,9 @@ onUnmounted(() => {
     </div>
 
     <!-- ================= FLOATING TOP CONTROLS ================= -->
-    <header class="fixed top-0 inset-x-0 z-50 flex items-center justify-between px-4 sm:px-8 py-3.5 sm:py-4 bg-black/40 backdrop-blur-md border-b border-white/10">
+    <header class="fixed top-0 inset-x-0 z-50 flex items-center justify-between px-3 sm:px-8 py-3 bg-black/50 backdrop-blur-md border-b border-white/10">
       <!-- Brand Crest -->
-      <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2.5 sm:gap-3">
         <div class="relative w-9 h-9 sm:w-10 sm:h-10 rounded-lg p-0.5 bg-gradient-to-b from-slate-200 via-slate-400 to-slate-700 shadow-[0_0_15px_rgba(255,255,255,0.3)]">
           <img src="/logo.jpg" alt="SL Club" class="w-full h-full object-contain rounded-md" />
         </div>
@@ -121,8 +196,19 @@ onUnmounted(() => {
 
       <!-- Right Action Items -->
       <div class="flex items-center gap-2 sm:gap-3">
+        <!-- Guest Name Creator Button (Admin / Host tool) -->
+        <button
+          @click="openNameModal"
+          type="button"
+          class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/25 text-slate-200 hover:text-white text-xs font-semibold backdrop-blur-md transition-all shadow-sm cursor-pointer"
+          title="ចុចដើម្បីសរសេរឈ្មោះភ្ញៀវកិត្តិយសម្នាក់ៗ"
+        >
+          <span class="material-symbols-outlined text-sm text-amber-300">edit_note</span>
+          <span class="hidden xs:inline">{{ guestName ? 'កែឈ្មោះភ្ញៀវ' : 'ដាក់ឈ្មោះភ្ញៀវ' }}</span>
+        </button>
+
         <!-- Official Reveal Date Badge -->
-        <div class="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/15 text-[11px] text-slate-300 font-medium">
+        <div class="hidden md:flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/15 text-[11px] text-slate-300 font-medium">
           <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
           <span>បើកសម្ពោធ៖ ថ្ងៃទី ០៩ វិច្ឆិកា</span>
         </div>
@@ -240,24 +326,52 @@ onUnmounted(() => {
             </div>
           </div>
 
-          <!-- Middle Section: Frosted Glass VIP Name Badge Card -->
+          <!-- Middle Section: Frosted Glass VIP Name Badge Card (Personalized Guest Box) -->
           <div class="relative z-10 w-full my-auto py-3">
-            <div class="relative w-full rounded-xl p-4 sm:p-5 bg-white/10 backdrop-blur-md border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.5),inset_0_1px_10px_rgba(255,255,255,0.15)] flex flex-col items-center justify-center text-center overflow-hidden group">
+            <div
+              @click="openNameModal"
+              class="relative w-full rounded-xl p-4 sm:p-5 bg-white/10 backdrop-blur-md border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.5),inset_0_1px_10px_rgba(255,255,255,0.15)] flex flex-col items-center justify-center text-center overflow-hidden group cursor-pointer hover:border-amber-400/50 transition-all"
+              title="ចុចដើម្បីកែ ឬដាក់ឈ្មោះភ្ញៀវកិត្តិយស"
+            >
               <!-- Shimmer light reflection effect -->
               <div class="absolute inset-0 -translate-x-full group-hover:translate-x-full bg-gradient-to-r from-transparent via-white/15 to-transparent transition-transform duration-1000"></div>
 
+              <!-- Top Star Crest -->
               <div class="flex items-center gap-2 mb-1.5 text-amber-300">
                 <span class="material-symbols-outlined text-sm">stars</span>
                 <span class="text-[11px] sm:text-xs font-bold uppercase tracking-widest">VIP HONORABLE GUEST</span>
                 <span class="material-symbols-outlined text-sm">stars</span>
               </div>
               <div class="h-0.5 w-16 bg-gradient-to-r from-transparent via-white/40 to-transparent my-1"></div>
-              <p class="text-sm sm:text-base font-semibold text-white/90">
-                សូមគោរពអញ្ជើញ ឯកឧត្តម លោកជំទាវ លោក លោកស្រី
-              </p>
-              <p class="text-[11px] sm:text-xs text-slate-300/80 mt-1">
-                ចូលរួមពិធីបើកសម្ពោធជាផ្លូវការ SL CLUB
-              </p>
+
+              <!-- DYNAMIC GUEST NAME DISPLAY -->
+              <div v-if="guestName" class="flex flex-col items-center py-1">
+                <span class="text-xs sm:text-sm text-amber-300 font-semibold tracking-wide font-['Kantumruy_Pro',sans-serif]">
+                  សូមគោរពអញ្ជើញ
+                </span>
+                <h3 class="text-base sm:text-xl md:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-white to-amber-300 py-0.5 filter drop-shadow-[0_0_14px_rgba(251,191,36,0.7)] font-['Kantumruy_Pro','Battambang',sans-serif] leading-tight">
+                  {{ guestName }}
+                </h3>
+                <span class="text-[10px] sm:text-[11px] text-slate-300/90 mt-0.5">
+                  ចូលរួមពិធីបើកសម្ពោធជាផ្លូវការ SL CLUB
+                </span>
+              </div>
+
+              <!-- DEFAULT GENERAL GUEST TEXT (When no name is specified) -->
+              <div v-else class="flex flex-col items-center">
+                <p class="text-sm sm:text-base font-semibold text-white/90">
+                  សូមគោរពអញ្ជើញ ឯកឧត្តម លោកជំទាវ លោក លោកស្រី
+                </p>
+                <p class="text-[11px] sm:text-xs text-slate-300/80 mt-1">
+                  ចូលរួមពិធីបើកសម្ពោធជាផ្លូវការ SL CLUB
+                </p>
+              </div>
+
+              <!-- Subtle Edit Pill Icon -->
+              <div class="mt-2 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/5 border border-white/15 text-[10px] text-slate-300 group-hover:text-amber-300 group-hover:border-amber-400/40 transition-colors">
+                <span class="material-symbols-outlined text-xs">edit</span>
+                <span>{{ guestName ? 'ចុចកែឈ្មោះ' : 'ចុចដាក់ឈ្មោះភ្ញៀវ' }}</span>
+              </div>
             </div>
           </div>
 
@@ -456,6 +570,99 @@ onUnmounted(() => {
       </section>
 
     </div>
+
+    <!-- ================= GUEST NAME LINK GENERATOR MODAL (ADMIN / HOST TOOL) ================= -->
+    <Transition name="fade">
+      <div
+        v-if="isNameModalOpen"
+        class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md"
+        @click.self="closeNameModal"
+      >
+        <div class="relative w-full max-w-lg rounded-2xl bg-[#12131a] border border-amber-400/40 p-6 sm:p-8 shadow-[0_0_50px_rgba(251,191,36,0.3)] flex flex-col gap-5 text-left">
+          <!-- Close Button -->
+          <button
+            @click="closeNameModal"
+            type="button"
+            class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
+          >
+            <span class="material-symbols-outlined text-sm">close</span>
+          </button>
+
+          <!-- Modal Title -->
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-amber-400/20 border border-amber-400/40 flex items-center justify-center text-amber-300">
+              <span class="material-symbols-outlined text-2xl">badge</span>
+            </div>
+            <div>
+              <h3 class="text-lg sm:text-xl font-bold text-white font-['Kantumruy_Pro',sans-serif]">
+                សរសេរឈ្មោះលើសំបុត្រអញ្ជើញ VIP
+              </h3>
+              <p class="text-xs text-slate-400">
+                វាយឈ្មោះភ្ញៀវម្នាក់ៗដើម្បីបង្កើត Link ផ្ញើផ្ទាល់ខ្លួន
+              </p>
+            </div>
+          </div>
+
+          <!-- Name Input Field -->
+          <div class="flex flex-col gap-2">
+            <label class="text-xs font-semibold text-amber-300">
+              ឈ្មោះភ្ញៀវកិត្តិយស (Guest Name)
+            </label>
+            <input
+              v-model="inputGuestName"
+              type="text"
+              placeholder="ឧទាហរណ៍៖ ឯកឧត្តម ជា សុខា ឬ លោក ចាន់ តារា"
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/20 text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 transition-colors text-sm sm:text-base font-['Kantumruy_Pro',sans-serif]"
+              @keyup.enter="applyAndPreviewName"
+            />
+          </div>
+
+          <!-- Generated Link Preview Box -->
+          <div class="flex flex-col gap-1.5 p-3 rounded-xl bg-black/60 border border-white/10">
+            <span class="text-[11px] text-slate-400">Link ដែលត្រូវផ្ញើទៅកាន់ភ្ញៀវ៖</span>
+            <div class="text-xs text-amber-300/90 font-mono break-all line-clamp-2 select-all">
+              {{ generatedGuestUrl }}
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex flex-col sm:flex-row items-center gap-3 pt-2">
+            <!-- Copy Link Button -->
+            <button
+              @click="copyGuestLink"
+              type="button"
+              class="w-full sm:flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black font-bold text-xs sm:text-sm shadow-lg shadow-amber-400/20 transition-all cursor-pointer"
+            >
+              <span class="material-symbols-outlined text-base">
+                {{ copiedSuccess ? 'check_circle' : 'content_copy' }}
+              </span>
+              <span>{{ copiedSuccess ? 'បានចម្លង Link រួចរាល់!' : 'ចម្លង Link (Copy Link)' }}</span>
+            </button>
+
+            <!-- Share to Telegram -->
+            <button
+              @click="shareViaTelegram"
+              type="button"
+              class="w-full sm:w-auto flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs sm:text-sm shadow-md transition-all cursor-pointer"
+              title="ផ្ញើទៅកាន់ Telegram"
+            >
+              <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.75-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/>
+              </svg>
+              <span>ផ្ញើតាម Telegram</span>
+            </button>
+          </div>
+
+          <!-- Preview on Card Button -->
+          <button
+            @click="applyAndPreviewName"
+            type="button"
+            class="text-xs text-center text-slate-400 hover:text-white transition-colors cursor-pointer py-1"
+          >
+            មើលសាកល្បងលើលិខិតអញ្ជើញភ្លាមៗ (Preview on Card)
+          </button>
+        </div>
+      </div>
+    </Transition>
   </div>
 </template>
-
