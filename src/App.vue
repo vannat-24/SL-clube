@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, nextTick, onMounted, onUnmounted } from 'vue'
 import TeaserView from './components/TeaserView.vue'
 import MainEventView from './components/MainEventView.vue'
 
@@ -18,14 +18,21 @@ const isPlayingIntro = ref(false)
 const introVideoRef = ref(null)
 
 function startIntroVideo() {
-  isPlayingIntro = ref(true)
   isPlayingIntro.value = true
-  if (introVideoRef.value) {
-    introVideoRef.value.currentTime = 0
-    introVideoRef.value.play().catch(err => {
-      console.warn("Autoplay blocked:", err)
-    })
-  }
+  nextTick(() => {
+    if (introVideoRef.value) {
+      introVideoRef.value.currentTime = 0
+      const playPromise = introVideoRef.value.play()
+      if (playPromise !== undefined) {
+        playPromise.catch(err => {
+          console.warn("Autoplay blocked or video error:", err)
+          finishIntroVideo()
+        })
+      }
+    } else {
+      finishIntroVideo()
+    }
+  })
 }
 
 function finishIntroVideo() {
@@ -79,13 +86,16 @@ onUnmounted(() => {
         class="fixed inset-0 z-[999] flex items-center justify-center bg-black overflow-hidden select-none"
       >
         <!-- Full-Screen Video Player (Plays on Guest Click) -->
-        <div v-show="isPlayingIntro" class="absolute inset-0 bg-black">
+        <div v-show="isPlayingIntro" class="absolute inset-0 bg-black" @click="finishIntroVideo">
           <video
             ref="introVideoRef"
             playsinline
+            webkit-playsinline
+            muted
             preload="auto"
             class="w-full h-full object-cover"
             @ended="finishIntroVideo"
+            @error="finishIntroVideo"
           >
             <source src="/intro-video.mp4" type="video/mp4" />
           </video>

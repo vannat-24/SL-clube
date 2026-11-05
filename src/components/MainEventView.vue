@@ -225,13 +225,16 @@ function scrollToSection(id) {
       class="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden bg-black select-none"
     >
       <!-- Mode A: Video Playing Full-Screen -->
-      <div v-show="isPlayingIntroVideo" class="absolute inset-0 z-20 bg-black">
+      <div v-show="isPlayingIntroVideo" class="absolute inset-0 z-20 bg-black" @click="finishIntro">
         <video
           ref="introVideoRef"
           playsinline
+          webkit-playsinline
+          muted
           preload="auto"
           class="w-full h-full object-cover"
           @ended="handleVideoEnded"
+          @error="finishIntro"
         >
           <source src="/intro-video.mp4" type="video/mp4" />
         </video>
