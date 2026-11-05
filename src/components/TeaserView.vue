@@ -346,6 +346,38 @@ function nextGalleryImage() {
   selectedGalleryIndex.value = (selectedGalleryIndex.value + 1) % galleryImages.length
 }
 
+// Mobile Carousel Slider State
+const galleryViewMode = ref('grid') // 'grid' | 'slider'
+const activeSlideIndex = ref(0)
+
+function prevSlide() {
+  activeSlideIndex.value = (activeSlideIndex.value - 1 + galleryImages.length) % galleryImages.length
+}
+
+function nextSlide() {
+  activeSlideIndex.value = (activeSlideIndex.value + 1) % galleryImages.length
+}
+
+let touchStartX = 0
+let touchEndX = 0
+
+function handleTouchStart(e) {
+  if (e.changedTouches && e.changedTouches[0]) {
+    touchStartX = e.changedTouches[0].screenX
+  }
+}
+
+function handleTouchEnd(e) {
+  if (e.changedTouches && e.changedTouches[0]) {
+    touchEndX = e.changedTouches[0].screenX
+    if (touchStartX - touchEndX > 40) {
+      nextSlide()
+    } else if (touchEndX - touchStartX > 40) {
+      prevSlide()
+    }
+  }
+}
+
 function handleKeyDown(e) {
   if (!isLightboxOpen.value) return
   if (e.key === 'Escape') closeLightbox()
@@ -781,20 +813,135 @@ onUnmounted(() => {
             <span>(ចុចលើរូបនីមួយៗដើម្បីពង្រីកមើលទំហំធំពេញលេញ • Tap any photo to enlarge)</span>
           </span>
 
-          <!-- ================= BENTO LUXURY GALLERY GRID (5 PHOTOS) ================= -->
-          <div class="mt-10 w-full grid grid-cols-12 gap-4 sm:gap-6">
+          <!-- ================= VIEW MODE SWITCHER (GRID vs SLIDER) ================= -->
+          <div class="mt-6 flex items-center p-1 rounded-full bg-black/60 border border-white/15 shadow-md">
+            <button
+              @click="galleryViewMode = 'grid'"
+              type="button"
+              class="flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer"
+              :class="galleryViewMode === 'grid' ? 'bg-gradient-to-r from-amber-400 to-amber-500 text-black shadow-lg shadow-amber-400/30' : 'text-slate-300 hover:text-white'"
+            >
+              <span class="material-symbols-outlined text-base">view_agenda</span>
+              <span>រូបភាពទាំងអស់ (៥)</span>
+            </button>
+
+            <button
+              @click="galleryViewMode = 'slider'"
+              type="button"
+              class="flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer"
+              :class="galleryViewMode === 'slider' ? 'bg-gradient-to-r from-amber-400 to-amber-500 text-black shadow-lg shadow-amber-400/30' : 'text-slate-300 hover:text-white'"
+            >
+              <span class="material-symbols-outlined text-base">swipe</span>
+              <span>ស្លាយរូបភាព (Slider)</span>
+            </button>
+          </div>
+
+          <!-- ================= 1. MOBILE INTERACTIVE SLIDER VIEW ================= -->
+          <div
+            v-if="galleryViewMode === 'slider'"
+            class="mt-8 w-full max-w-3xl flex flex-col items-center"
+            @touchstart="handleTouchStart"
+            @touchend="handleTouchEnd"
+          >
+            <!-- Featured Slide Card -->
+            <div
+              @click="openLightbox(activeSlideIndex)"
+              class="w-full relative group cursor-pointer rounded-2xl overflow-hidden bg-[#12131a] border border-white/20 hover:border-amber-400/80 transition-all duration-500 shadow-2xl aspect-[16/10] min-h-[230px] sm:min-h-[300px]"
+            >
+              <img
+                :src="galleryImages[activeSlideIndex].src"
+                :alt="galleryImages[activeSlideIndex].title"
+                class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/35 to-transparent"></div>
+
+              <!-- Top Controls in Slide -->
+              <div class="absolute top-3 left-3 sm:top-4 sm:left-4 z-10 flex items-center gap-2">
+                <span class="px-2.5 py-1 rounded-full bg-black/80 backdrop-blur-md border border-amber-400/50 text-amber-300 text-[10px] sm:text-xs font-bold tracking-wider uppercase shadow-md">
+                  {{ galleryImages[activeSlideIndex].tag }}
+                </span>
+                <span class="px-2.5 py-1 rounded-full bg-black/80 backdrop-blur-md border border-white/20 text-white text-[10px] sm:text-xs font-mono font-bold">
+                  {{ activeSlideIndex + 1 }} / {{ galleryImages.length }}
+                </span>
+              </div>
+              <div class="absolute top-3 right-3 sm:top-4 sm:right-4 z-10 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-black/70 backdrop-blur-md border border-white/30 text-white flex items-center justify-center group-hover:bg-amber-400 group-hover:text-black transition-all shadow-md">
+                <span class="material-symbols-outlined text-base">fullscreen</span>
+              </div>
+
+              <!-- Next / Prev Arrows on Slide -->
+              <button
+                @click.stop="prevSlide"
+                type="button"
+                class="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-black/70 hover:bg-amber-400 text-white hover:text-black border border-white/30 flex items-center justify-center transition-all cursor-pointer shadow-xl hover:scale-110 active:scale-95"
+                title="រូបមុន"
+              >
+                <span class="material-symbols-outlined text-2xl">chevron_left</span>
+              </button>
+              <button
+                @click.stop="nextSlide"
+                type="button"
+                class="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-black/70 hover:bg-amber-400 text-white hover:text-black border border-white/30 flex items-center justify-center transition-all cursor-pointer shadow-xl hover:scale-110 active:scale-95"
+                title="រូបបន្ទាប់"
+              >
+                <span class="material-symbols-outlined text-2xl">chevron_right</span>
+              </button>
+
+              <!-- Bottom Caption -->
+              <div class="absolute bottom-0 inset-x-0 p-4 sm:p-5 z-10 flex flex-col text-left">
+                <h3 class="text-base sm:text-xl font-bold text-white group-hover:text-amber-300 transition-colors font-['Kantumruy_Pro',sans-serif] leading-snug">
+                  {{ galleryImages[activeSlideIndex].title }}
+                </h3>
+                <p class="text-xs sm:text-sm text-slate-300 font-sans tracking-wide mt-0.5">
+                  {{ galleryImages[activeSlideIndex].sub }}
+                </p>
+              </div>
+            </div>
+
+            <!-- Slide Indicator Dots -->
+            <div class="mt-4 flex items-center gap-2">
+              <button
+                v-for="(_, idx) in galleryImages"
+                :key="idx"
+                @click="activeSlideIndex = idx"
+                type="button"
+                class="h-2 rounded-full transition-all cursor-pointer"
+                :class="activeSlideIndex === idx ? 'w-8 bg-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.8)]' : 'w-2 bg-white/30 hover:bg-white/60'"
+              ></button>
+            </div>
+
+            <!-- 5 Quick-Select Thumbnails -->
+            <div class="mt-3 flex items-center justify-center gap-2 sm:gap-3 overflow-x-auto py-1 max-w-full">
+              <button
+                v-for="(img, idx) in galleryImages"
+                :key="img.id"
+                @click="activeSlideIndex = idx"
+                type="button"
+                class="relative w-14 sm:w-20 aspect-[16/10] rounded-lg overflow-hidden border-2 transition-all cursor-pointer shrink-0"
+                :class="activeSlideIndex === idx ? 'border-amber-400 scale-105 shadow-[0_0_15px_rgba(251,191,36,0.8)]' : 'border-white/20 opacity-60 hover:opacity-100'"
+              >
+                <img :src="img.src" :alt="img.title" class="w-full h-full object-cover" />
+              </button>
+            </div>
+          </div>
+
+          <!-- ================= 2. ALL PHOTOS GRID (FLEX-COL ON MOBILE, BENTO ON DESKTOP) ================= -->
+          <!-- NOTE: flex-col on mobile guarantees zero overlapping on iOS Safari / WebKit -->
+          <div
+            v-else
+            class="mt-8 sm:mt-10 w-full flex flex-col md:grid md:grid-cols-2 lg:grid-cols-12 gap-5 sm:gap-6"
+          >
             <!-- PHOTO 1: Hero Large Featured (Arena & 3D Lights) -->
             <div
               @click="openLightbox(0)"
-              class="col-span-12 lg:col-span-7 relative group cursor-pointer rounded-2xl overflow-hidden bg-[#12131a] border border-white/15 hover:border-amber-400/80 transition-all duration-500 shadow-[0_10px_30px_rgba(0,0,0,0.8)] hover:shadow-[0_0_35px_rgba(251,191,36,0.35)] aspect-[16/10]"
+              class="w-full relative group cursor-pointer rounded-2xl overflow-hidden bg-[#12131a] border border-white/15 hover:border-amber-400/80 transition-all duration-500 shadow-[0_10px_30px_rgba(0,0,0,0.8)] hover:shadow-[0_0_35px_rgba(251,191,36,0.35)] aspect-[16/10] min-h-[220px] sm:min-h-[260px] md:min-h-[300px] lg:col-span-7"
             >
               <img
                 :src="galleryImages[0].src"
                 :alt="galleryImages[0].title"
-                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-transparent"></div>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/35 to-transparent"></div>
 
               <!-- Top Badge & Zoom Icon -->
               <div class="absolute top-3 left-3 sm:top-4 sm:left-4 z-10 flex items-center gap-2">
@@ -820,15 +967,15 @@ onUnmounted(() => {
             <!-- PHOTO 2: Skybox Mezzanine -->
             <div
               @click="openLightbox(1)"
-              class="col-span-12 sm:col-span-6 lg:col-span-5 relative group cursor-pointer rounded-2xl overflow-hidden bg-[#12131a] border border-white/15 hover:border-amber-400/80 transition-all duration-500 shadow-[0_10px_30px_rgba(0,0,0,0.8)] hover:shadow-[0_0_35px_rgba(251,191,36,0.35)] aspect-[16/10]"
+              class="w-full relative group cursor-pointer rounded-2xl overflow-hidden bg-[#12131a] border border-white/15 hover:border-amber-400/80 transition-all duration-500 shadow-[0_10px_30px_rgba(0,0,0,0.8)] hover:shadow-[0_0_35px_rgba(251,191,36,0.35)] aspect-[16/10] min-h-[220px] sm:min-h-[260px] md:min-h-[300px] lg:col-span-5"
             >
               <img
                 :src="galleryImages[1].src"
                 :alt="galleryImages[1].title"
-                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-transparent"></div>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/35 to-transparent"></div>
 
               <div class="absolute top-3 left-3 sm:top-4 sm:left-4 z-10 flex items-center gap-2">
                 <span class="px-2.5 py-1 rounded-full bg-black/80 backdrop-blur-md border border-amber-400/50 text-amber-300 text-[10px] sm:text-xs font-bold tracking-wider uppercase shadow-md">
@@ -852,15 +999,15 @@ onUnmounted(() => {
             <!-- PHOTO 3: Center Hexagon DJ Booth -->
             <div
               @click="openLightbox(2)"
-              class="col-span-12 sm:col-span-6 lg:col-span-4 relative group cursor-pointer rounded-2xl overflow-hidden bg-[#12131a] border border-white/15 hover:border-amber-400/80 transition-all duration-500 shadow-[0_10px_30px_rgba(0,0,0,0.8)] hover:shadow-[0_0_35px_rgba(251,191,36,0.35)] aspect-[4/3]"
+              class="w-full relative group cursor-pointer rounded-2xl overflow-hidden bg-[#12131a] border border-white/15 hover:border-amber-400/80 transition-all duration-500 shadow-[0_10px_30px_rgba(0,0,0,0.8)] hover:shadow-[0_0_35px_rgba(251,191,36,0.35)] aspect-[16/10] min-h-[220px] sm:min-h-[260px] md:min-h-[300px] md:col-span-1 lg:col-span-4"
             >
               <img
                 :src="galleryImages[2].src"
                 :alt="galleryImages[2].title"
-                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-transparent"></div>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/35 to-transparent"></div>
 
               <div class="absolute top-3 left-3 z-10">
                 <span class="px-2.5 py-1 rounded-full bg-black/80 backdrop-blur-md border border-amber-400/50 text-amber-300 text-[10px] font-bold tracking-wider uppercase shadow-md">
@@ -871,7 +1018,7 @@ onUnmounted(() => {
                 <span class="material-symbols-outlined text-sm">fullscreen</span>
               </div>
 
-              <div class="absolute bottom-0 inset-x-0 p-3.5 sm:p-4 z-10 flex flex-col text-left">
+              <div class="absolute bottom-0 inset-x-0 p-4 z-10 flex flex-col text-left">
                 <h3 class="text-sm sm:text-base font-bold text-white group-hover:text-amber-300 transition-colors font-['Kantumruy_Pro',sans-serif] leading-snug">
                   {{ galleryImages[2].title }}
                 </h3>
@@ -884,15 +1031,15 @@ onUnmounted(() => {
             <!-- PHOTO 4: VIP Lounge Sofas -->
             <div
               @click="openLightbox(3)"
-              class="col-span-12 sm:col-span-6 lg:col-span-4 relative group cursor-pointer rounded-2xl overflow-hidden bg-[#12131a] border border-white/15 hover:border-amber-400/80 transition-all duration-500 shadow-[0_10px_30px_rgba(0,0,0,0.8)] hover:shadow-[0_0_35px_rgba(251,191,36,0.35)] aspect-[4/3]"
+              class="w-full relative group cursor-pointer rounded-2xl overflow-hidden bg-[#12131a] border border-white/15 hover:border-amber-400/80 transition-all duration-500 shadow-[0_10px_30px_rgba(0,0,0,0.8)] hover:shadow-[0_0_35px_rgba(251,191,36,0.35)] aspect-[16/10] min-h-[220px] sm:min-h-[260px] md:min-h-[300px] md:col-span-1 lg:col-span-4"
             >
               <img
                 :src="galleryImages[3].src"
                 :alt="galleryImages[3].title"
-                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-transparent"></div>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/35 to-transparent"></div>
 
               <div class="absolute top-3 left-3 z-10">
                 <span class="px-2.5 py-1 rounded-full bg-black/80 backdrop-blur-md border border-amber-400/50 text-amber-300 text-[10px] font-bold tracking-wider uppercase shadow-md">
@@ -903,7 +1050,7 @@ onUnmounted(() => {
                 <span class="material-symbols-outlined text-sm">fullscreen</span>
               </div>
 
-              <div class="absolute bottom-0 inset-x-0 p-3.5 sm:p-4 z-10 flex flex-col text-left">
+              <div class="absolute bottom-0 inset-x-0 p-4 z-10 flex flex-col text-left">
                 <h3 class="text-sm sm:text-base font-bold text-white group-hover:text-amber-300 transition-colors font-['Kantumruy_Pro',sans-serif] leading-snug">
                   {{ galleryImages[3].title }}
                 </h3>
@@ -916,15 +1063,15 @@ onUnmounted(() => {
             <!-- PHOTO 5: Bar & Dance Floor -->
             <div
               @click="openLightbox(4)"
-              class="col-span-12 sm:col-span-6 lg:col-span-4 relative group cursor-pointer rounded-2xl overflow-hidden bg-[#12131a] border border-white/15 hover:border-amber-400/80 transition-all duration-500 shadow-[0_10px_30px_rgba(0,0,0,0.8)] hover:shadow-[0_0_35px_rgba(251,191,36,0.35)] aspect-[4/3]"
+              class="w-full relative group cursor-pointer rounded-2xl overflow-hidden bg-[#12131a] border border-white/15 hover:border-amber-400/80 transition-all duration-500 shadow-[0_10px_30px_rgba(0,0,0,0.8)] hover:shadow-[0_0_35px_rgba(251,191,36,0.35)] aspect-[16/10] min-h-[220px] sm:min-h-[260px] md:min-h-[300px] md:col-span-2 lg:col-span-4"
             >
               <img
                 :src="galleryImages[4].src"
                 :alt="galleryImages[4].title"
-                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-transparent"></div>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/35 to-transparent"></div>
 
               <div class="absolute top-3 left-3 z-10">
                 <span class="px-2.5 py-1 rounded-full bg-black/80 backdrop-blur-md border border-amber-400/50 text-amber-300 text-[10px] font-bold tracking-wider uppercase shadow-md">
@@ -935,7 +1082,7 @@ onUnmounted(() => {
                 <span class="material-symbols-outlined text-sm">fullscreen</span>
               </div>
 
-              <div class="absolute bottom-0 inset-x-0 p-3.5 sm:p-4 z-10 flex flex-col text-left">
+              <div class="absolute bottom-0 inset-x-0 p-4 z-10 flex flex-col text-left">
                 <h3 class="text-sm sm:text-base font-bold text-white group-hover:text-amber-300 transition-colors font-['Kantumruy_Pro',sans-serif] leading-snug">
                   {{ galleryImages[4].title }}
                 </h3>
