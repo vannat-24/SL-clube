@@ -3,9 +3,34 @@ import { ref, onMounted, onUnmounted } from 'vue'
 
 const emit = defineEmits(['replay-door'])
 
-// --- Reload / Grand Entrance Door State ---
-const isDoorOpen = ref(false)
-const showIntroScreen = ref(true)
+// --- Grand Video Entrance State ---
+const showIntroScreen = ref(false)
+const isPlayingIntroVideo = ref(false)
+const introVideoRef = ref(null)
+
+function startIntroVideo() {
+  isPlayingIntroVideo.value = true
+  if (introVideoRef.value) {
+    introVideoRef.value.currentTime = 0
+    introVideoRef.value.play().catch(err => {
+      console.warn("Autoplay blocked, user interaction required:", err)
+    })
+  }
+}
+
+function handleVideoEnded() {
+  finishIntro()
+}
+
+function finishIntro() {
+  showIntroScreen.value = false
+  isPlayingIntroVideo.value = false
+}
+
+function replayDoor() {
+  showIntroScreen.value = true
+  startIntroVideo()
+}
 
 // --- Hamburger Menu State (ទ្រេ ៣) ---
 const isMenuOpen = ref(false)
@@ -45,18 +70,7 @@ function toggleVideo() {
   }
 }
 
-function openDoor() {
-  if (isDoorOpen.value) return
-  isDoorOpen.value = true
-  setTimeout(() => {
-    showIntroScreen.value = false
-  }, 1300)
-}
 
-function replayDoor() {
-  showIntroScreen.value = true
-  isDoorOpen.value = false
-}
 
 // --- VIP Tiers ---
 const tiers = [
@@ -205,74 +219,50 @@ function scrollToSection(id) {
       <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(242,202,80,0.1)_0%,_transparent_75%)]"></div>
     </div>
 
-    <!-- GRAND LUXURY VIP DOUBLE-DOOR INTRO SCREEN -->
+    <!-- ================= GRAND LUXURY VIP VIDEO INTRO ENTRANCE ================= -->
     <div
       v-if="showIntroScreen"
       class="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden bg-black select-none"
     >
-      <!-- LEFT DOOR -->
-      <div
-        :class="[
-          'absolute top-0 left-0 w-1/2 h-full bg-gradient-to-r from-[#0a0a0a] via-[#121212] to-[#1a1919] border-r-2 border-primary/50 flex items-center justify-end pr-2 md:pr-6 transition-transform duration-1000 ease-[cubic-bezier(0.77,0,0.175,1)] shadow-[inset_-25px_0_60px_rgba(0,0,0,0.95)]',
-          isDoorOpen ? '-translate-x-full' : 'translate-x-0'
-        ]"
-      >
-        <div class="h-5/6 w-4/5 border border-primary/20 rounded-l-2xl relative mr-4 p-6 hidden md:flex flex-col justify-between">
-          <div class="w-12 h-12 border-t-2 border-l-2 border-primary/60"></div>
-          <div class="space-y-6 opacity-30">
-            <div class="h-0.5 w-full bg-gradient-to-r from-transparent via-primary/50 to-primary"></div>
-            <div class="h-0.5 w-3/4 bg-gradient-to-r from-transparent via-primary/50 to-primary ml-auto"></div>
-            <div class="h-0.5 w-1/2 bg-gradient-to-r from-transparent via-primary/50 to-primary ml-auto"></div>
-          </div>
-          <div class="w-12 h-12 border-b-2 border-l-2 border-primary/60"></div>
-        </div>
-        <div class="w-3 md:w-4 h-36 md:h-52 rounded-full bg-gradient-to-b from-primary via-primary-container to-secondary-fixed shadow-[0_0_20px_rgba(242,202,80,0.6)] mr-1"></div>
+      <!-- Mode A: Video Playing Full-Screen -->
+      <div v-show="isPlayingIntroVideo" class="absolute inset-0 z-20 bg-black">
+        <video
+          ref="introVideoRef"
+          playsinline
+          preload="auto"
+          class="w-full h-full object-cover"
+          @ended="handleVideoEnded"
+        >
+          <source src="/intro-video.mp4" type="video/mp4" />
+        </video>
+
+        <!-- Skip Button -->
+        <button
+          @click="finishIntro"
+          type="button"
+          class="absolute top-6 right-6 z-30 flex items-center gap-1.5 px-4 py-2 rounded-full bg-black/60 hover:bg-black/80 backdrop-blur-md border border-white/20 text-white text-xs font-semibold shadow-lg hover:scale-105 active:scale-95 transition-all cursor-pointer"
+        >
+          <span>រំលង (Skip)</span>
+          <span class="material-symbols-outlined text-sm">skip_next</span>
+        </button>
       </div>
 
-      <!-- RIGHT DOOR -->
+      <!-- Mode B: Initial Welcoming Screen Before Click -->
       <div
-        :class="[
-          'absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-[#0a0a0a] via-[#121212] to-[#1a1919] border-l-2 border-primary/50 flex items-center justify-start pl-2 md:pl-6 transition-transform duration-1000 ease-[cubic-bezier(0.77,0,0.175,1)] shadow-[inset_25px_0_60px_rgba(0,0,0,0.95)]',
-          isDoorOpen ? 'translate-x-full' : 'translate-x-0'
-        ]"
+        v-show="!isPlayingIntroVideo"
+        class="relative z-10 flex flex-col items-center text-center px-4 sm:px-6 max-w-lg mx-auto"
       >
-        <div class="w-3 md:w-4 h-36 md:h-52 rounded-full bg-gradient-to-b from-primary via-primary-container to-secondary-fixed shadow-[0_0_20px_rgba(242,202,80,0.6)] ml-1"></div>
-        <div class="h-5/6 w-4/5 border border-primary/20 rounded-r-2xl relative ml-4 p-6 hidden md:flex flex-col justify-between">
-          <div class="w-12 h-12 border-t-2 border-r-2 border-primary/60 ml-auto"></div>
-          <div class="space-y-6 opacity-30">
-            <div class="h-0.5 w-full bg-gradient-to-l from-transparent via-primary/50 to-primary"></div>
-            <div class="h-0.5 w-3/4 bg-gradient-to-l from-transparent via-primary/50 to-primary mr-auto"></div>
-            <div class="h-0.5 w-1/2 bg-gradient-to-l from-transparent via-primary/50 to-primary mr-auto"></div>
-          </div>
-          <div class="w-12 h-12 border-b-2 border-r-2 border-primary/60 ml-auto"></div>
-        </div>
-      </div>
+        <!-- Atmospheric Background Glow -->
+        <div class="absolute -inset-20 bg-radial-[circle_at_50%_50%] from-primary/20 via-primary/5 to-transparent blur-3xl rounded-full"></div>
 
-      <!-- GOLDEN LIGHT BLOOM -->
-      <div
-        :class="[
-          'absolute inset-0 pointer-events-none transition-opacity duration-700 bg-gradient-radial from-primary/30 via-transparent to-transparent z-10 flex items-center justify-center',
-          isDoorOpen ? 'opacity-100 scale-150' : 'opacity-0 scale-90'
-        ]"
-      >
-        <div class="w-96 md:w-[600px] h-96 md:h-[600px] rounded-full bg-primary/25 blur-[120px]"></div>
-      </div>
-
-      <!-- CENTER VIP EMBLEM, BRAND & OPEN DOOR ACTION -->
-      <div
-        :class="[
-          'relative z-20 flex flex-col items-center text-center px-4 sm:px-6 transition-all duration-700 max-w-lg mx-auto',
-          isDoorOpen ? 'opacity-0 scale-110 pointer-events-none' : 'opacity-100 scale-100'
-        ]"
-      >
-        <div class="relative mb-5 md:mb-7">
-          <div class="absolute inset-0 rounded-full bg-primary/30 blur-2xl animate-pulse"></div>
-          <div class="relative w-28 h-28 sm:w-36 sm:h-36 md:w-44 md:h-44 rounded-full p-1 bg-gradient-to-b from-secondary-fixed via-primary to-primary-container shadow-[0_0_40px_rgba(242,202,80,0.5)]">
+        <!-- Crest SL Logo -->
+        <div class="relative mb-6">
+          <div class="w-28 h-28 sm:w-36 sm:h-36 md:w-40 md:h-40 rounded-full p-1 bg-gradient-to-b from-secondary-fixed via-primary to-primary-container shadow-[0_0_50px_rgba(242,202,80,0.6)]">
             <div class="w-full h-full rounded-full bg-black/95 p-3 flex items-center justify-center overflow-hidden border border-primary/40">
               <img
                 src="/logo.jpg"
                 alt="SL Club Golden Monogram"
-                class="w-full h-full object-contain filter drop-shadow-[0_0_12px_rgba(242,202,80,0.7)]"
+                class="w-full h-full object-contain filter drop-shadow-[0_0_15px_rgba(242,202,80,0.8)]"
               />
             </div>
           </div>
@@ -292,17 +282,18 @@ function scrollToSection(id) {
           រាត្រីបើកសម្ពោធក្លឹបកម្សាន្តរាត្រី ភោជនីយដ្ឋានប្រណិត និងការប្រគំតន្ត្រីរាំរែក VIP
         </p>
 
+        <!-- Click to Play Video & Enter Website -->
         <button
-          @click="openDoor"
+          @click="startIntroVideo"
           type="button"
-          class="group relative inline-flex items-center justify-center gap-3 px-8 sm:px-10 py-3.5 sm:py-4 rounded-full bg-gradient-to-r from-secondary-fixed via-primary to-primary-container text-on-primary font-label-md text-sm sm:text-base font-bold shadow-[0_0_30px_rgba(242,202,80,0.6)] hover:shadow-[0_0_45px_rgba(242,202,80,0.9)] hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer"
+          class="group relative inline-flex items-center justify-center gap-3 px-8 sm:px-10 py-3.5 sm:py-4 rounded-full bg-gradient-to-r from-secondary-fixed via-primary to-primary-container text-on-primary font-label-md text-sm sm:text-base font-bold shadow-[0_0_35px_rgba(242,202,80,0.7)] hover:shadow-[0_0_50px_rgba(242,202,80,0.95)] hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer"
         >
-          <span class="material-symbols-outlined text-[20px] sm:text-[24px] group-hover:rotate-12 transition-transform">lock_open</span>
-          <span>បើកទ្វារកិត្តិយស • ENTER SL CLUB</span>
+          <span class="material-symbols-outlined text-[20px] sm:text-[24px] group-hover:scale-110 transition-transform">play_circle</span>
+          <span>ចុចបើកទស្សនា • ENTER SL CLUB</span>
         </button>
 
-        <span class="text-[11px] sm:text-xs text-slate-300 mt-3 font-light tracking-wide drop-shadow">
-          (ចុចដើម្បីបើកទ្វារចូលទស្សនាវេបសាយ)
+        <span class="text-[11px] sm:text-xs text-slate-400 mt-3 font-light tracking-wide">
+          (ចុចដើម្បីទស្សនាវីដេអូបើកទ្វារចូលវេបសាយ)
         </span>
       </div>
     </div>
