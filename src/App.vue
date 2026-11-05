@@ -17,6 +17,28 @@ const showIntroOverlay = ref(true)
 const isPlayingIntro = ref(false)
 const introVideoRef = ref(null)
 
+// Admin Login State
+const isAdminLoginOpen = ref(false)
+const adminPinInput = ref('')
+const adminPinError = ref(false)
+
+function openAdminLogin() {
+  adminPinInput.value = ''
+  adminPinError.value = false
+  isAdminLoginOpen.value = true
+}
+
+function verifyAdminPin() {
+  if (adminPinInput.value === '2026' || adminPinInput.value === '8888' || adminPinInput.value === '1234') {
+    isAdmin.value = true
+    localStorage.setItem('sl_club_admin_session', 'true')
+    isAdminLoginOpen.value = false
+    showIntroOverlay.value = false // Skip intro for admin
+  } else {
+    adminPinError.value = true
+  }
+}
+
 function startIntroVideo() {
   isPlayingIntro.value = true
 
@@ -28,7 +50,6 @@ function startIntroVideo() {
       if (playPromise !== undefined) {
         playPromise.catch(err => {
           console.warn("Video playback blocked or failed:", err)
-          // Fallback: If video cannot play, enter website immediately
           finishIntroVideo()
         })
       }
@@ -64,9 +85,14 @@ function checkDateGate() {
 
   if (typeof window !== 'undefined') {
     const params = new URLSearchParams(window.location.search)
-    isAdmin.value = params.get('role') === 'admin' ||
-                    params.get('admin') === 'true' ||
-                    localStorage.getItem('sl_club_admin_session') === 'true'
+    const isAdminParam = params.get('role') === 'admin' ||
+                         params.get('admin') === 'true' ||
+                         params.get('admin') === '1' ||
+                         localStorage.getItem('sl_club_admin_session') === 'true'
+    isAdmin.value = isAdminParam
+    if (params.get('role') === 'admin' || params.get('admin') === 'true') {
+      showIntroOverlay.value = false // Skip intro directly for admin
+    }
 
     const name = params.get('to') || params.get('name') || params.get('guest')
     if (name && name.trim()) {
@@ -183,6 +209,66 @@ onUnmounted(() => {
           <span class="text-[11px] text-slate-400 mt-3 font-light tracking-wide pointer-events-none">
             (ចុចដើម្បីទស្សនាវីដេអូបើកទ្វារចូលវេបសាយ)
           </span>
+
+          <!-- Direct Admin Login Button on Intro Screen -->
+          <button
+            @click.stop="openAdminLogin"
+            type="button"
+            class="relative z-30 mt-5 text-[11px] text-slate-500 hover:text-amber-300 flex items-center gap-1 transition-colors cursor-pointer py-1 px-3 rounded-full hover:bg-white/5"
+          >
+            <span class="material-symbols-outlined text-xs">admin_panel_settings</span>
+            <span>Admin Portal (សម្រាប់អ្នកគ្រប់គ្រង)</span>
+          </button>
+        </div>
+      </div>
+    </Transition>
+
+    <!-- ADMIN LOGIN PIN MODAL -->
+    <Transition name="fade">
+      <div
+        v-if="isAdminLoginOpen"
+        class="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md"
+        @click.self="isAdminLoginOpen = false"
+      >
+        <div class="relative w-full max-w-sm rounded-2xl bg-[#12131a] border border-amber-400/40 p-6 shadow-2xl flex flex-col gap-4 text-center">
+          <div class="w-12 h-12 rounded-full bg-amber-400/20 border border-amber-400/40 flex items-center justify-center text-amber-400 mx-auto">
+            <span class="material-symbols-outlined text-2xl">lock</span>
+          </div>
+
+          <div>
+            <h3 class="text-lg font-bold text-white font-['Kantumruy_Pro',sans-serif]">ចូលកាន់ Admin Portal</h3>
+            <p class="text-xs text-slate-400 mt-1">សូមបញ្ចូលលេខកូដសម្ងាត់ Admin PIN (2026)</p>
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <input
+              v-model="adminPinInput"
+              type="password"
+              placeholder="វាយលេខកូដ PIN..."
+              class="w-full text-center tracking-widest text-lg font-mono px-4 py-3 rounded-xl bg-white/5 border text-white placeholder-slate-500 focus:outline-none"
+              :class="adminPinError ? 'border-red-500' : 'border-white/20 focus:border-amber-400'"
+              @keyup.enter="verifyAdminPin"
+              autofocus
+            />
+            <span v-if="adminPinError" class="text-xs text-red-400">លេខកូដមិនត្រឹមត្រូវឡើយ (PIN: 2026)</span>
+          </div>
+
+          <div class="flex items-center gap-2 pt-1">
+            <button
+              @click="isAdminLoginOpen = false"
+              type="button"
+              class="flex-1 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-slate-300 text-xs font-semibold cursor-pointer"
+            >
+              បោះបង់
+            </button>
+            <button
+              @click="verifyAdminPin"
+              type="button"
+              class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 text-black text-xs font-bold shadow-md cursor-pointer"
+            >
+              ចូល Admin
+            </button>
+          </div>
         </div>
       </div>
     </Transition>
