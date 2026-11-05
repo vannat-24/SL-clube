@@ -9,14 +9,23 @@ const TARGET_DATE = new Date('2026-11-09T19:00:00')
 // Gate state: before Nov 9, default to TeaserView; on/after Nov 9, auto-unlock MainEventView
 const isNov9OrLater = ref(false)
 const previewOfficial = ref(false)
+const isAdmin = ref(false)
 
 function checkDateGate() {
   const now = new Date()
   isNov9OrLater.value = now.getTime() >= TARGET_DATE.getTime()
+
+  // Check admin state
+  if (typeof window !== 'undefined') {
+    const params = new URLSearchParams(window.location.search)
+    isAdmin.value = params.get('role') === 'admin' ||
+                    params.get('admin') === 'true' ||
+                    localStorage.getItem('sl_club_admin_session') === 'true'
+  }
 }
 
 // Current active view
-const showOfficial = computed(() => isNov9OrLater.value || previewOfficial.value)
+const showOfficial = computed(() => isNov9OrLater.value || (isAdmin.value && previewOfficial.value))
 
 let dateCheckInterval = null
 
@@ -32,9 +41,9 @@ onUnmounted(() => {
 
 <template>
   <div class="relative min-h-screen bg-[#08080a] text-slate-100 overflow-x-hidden">
-    <!-- FLOATING DEV / TEST CONTROLLER (Only visible when user toggles preview) -->
+    <!-- FLOATING DEV / TEST CONTROLLER (Only visible to Admin) -->
     <aside
-      v-if="!isNov9OrLater"
+      v-if="!isNov9OrLater && isAdmin"
       class="fixed bottom-4 right-4 z-[9999] flex items-center gap-2"
     >
       <button
@@ -50,7 +59,7 @@ onUnmounted(() => {
 
     <!-- DYNAMIC VIEW RENDERER -->
     <Transition name="fade" mode="out-in">
-      <!-- 1. TEASER VIEW: Shown Before November 9th (Video Background only, no music) -->
+      <!-- 1. TEASER VIEW: Shown Before November 9th -->
       <TeaserView
         v-if="!showOfficial"
         :target-date="TARGET_DATE"
