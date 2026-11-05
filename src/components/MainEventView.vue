@@ -773,7 +773,7 @@ function scrollToSection(id) {
               @click="openDirections"
               title="ចុចដើម្បីបើក Google Maps"
               class="relative lg:col-span-7 h-64 sm:h-80 lg:h-full min-h-[300px] bg-cover bg-center overflow-hidden cursor-pointer group bg-[#161616]"
-              style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDWOs7-RBh4vvU7kXYnb5DJrmGIUOW0vKz9vicZCbVcfH47u1dLB402cTN5rYINsL3tslojQViGM515dqBxE7deRF4lgL1oHloaMzPMdiVk-_Dbc7Ur3MsHIXYJkP5C0U_SflXg8mjhWmy6-dPZro59v5zM_5Tqb6FXcGFbsdftaiNCUKnfKOSvH0AzhUPTWR6AYdl4s6csvCE1RexzSUCY40hFMRXSx6TwKTfCCd2G')"
+              style="background-image: url('/gallery/club-1.jpg')"
             >
               <div class="absolute inset-0 bg-gradient-to-t from-[#121212] via-black/40 to-transparent group-hover:via-black/20 transition-all"></div>
               <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center group-hover:scale-110 transition-transform">

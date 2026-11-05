@@ -261,6 +261,13 @@ function scrollToCountdown() {
   }
 }
 
+function scrollToGallery() {
+  const el = document.getElementById('teaser-gallery')
+  if (el) {
+    el.scrollIntoView({ behavior: 'smooth' })
+  }
+}
+
 function openMaps() {
   window.open('https://maps.app.goo.gl/hSJKgn4A28KUYYnm8', '_blank')
 }
@@ -269,14 +276,100 @@ function openTelegram() {
   window.open('https://t.me/SLCLUB33', '_blank')
 }
 
+// =========================================================================
+// CLUB INTERIOR LUXURY GALLERY (5 PHOTOS)
+// =========================================================================
+const galleryImages = [
+  {
+    id: 1,
+    src: '/gallery/club-1.jpg',
+    title: 'ឆាកតន្ត្រី និងប្រព័ន្ធភ្លើង 3D Hologram Stage',
+    sub: 'Futuristic Main Arena & 3D Dynamic Lighting System',
+    tag: '3D STAGE & SOUND'
+  },
+  {
+    id: 2,
+    src: '/gallery/club-2.jpg',
+    title: 'ទិដ្ឋភាពពីជាន់លើ VIP Skybox Mezzanine',
+    sub: 'Elevated VIP Skybox & Mezzanine Overview',
+    tag: 'VIP SKYBOX'
+  },
+  {
+    id: 3,
+    src: '/gallery/club-3.jpg',
+    title: 'ឆាក DJ & អេក្រង់ LED Hexagon យក្ស',
+    sub: 'Center DJ Stage & Hexagonal LED Wall',
+    tag: 'HEXAGON DJ BOOTH'
+  },
+  {
+    id: 4,
+    src: '/gallery/club-4.jpg',
+    title: 'តំបន់កៅអីសាឡុង VIP Lounge ឯកជន',
+    sub: 'Exclusive VIP Lounge & Luxury Sofa Seating',
+    tag: 'VIP LUXURY LOUNGE'
+  },
+  {
+    id: 5,
+    src: '/gallery/club-5.jpg',
+    title: 'បារទំនើប & តំបន់រាំកម្សាន្ត Dance Floor',
+    sub: 'High-Table Cocktail & Immersive Dance Floor',
+    tag: 'BAR & DANCE FLOOR'
+  }
+]
+
+const selectedGalleryIndex = ref(null)
+const isLightboxOpen = ref(false)
+
+function openLightbox(index) {
+  selectedGalleryIndex.value = index
+  isLightboxOpen.value = true
+  if (typeof document !== 'undefined') {
+    document.body.style.overflow = 'hidden'
+  }
+}
+
+function closeLightbox() {
+  isLightboxOpen.value = false
+  selectedGalleryIndex.value = null
+  if (typeof document !== 'undefined') {
+    document.body.style.overflow = ''
+  }
+}
+
+function prevGalleryImage() {
+  if (selectedGalleryIndex.value === null) return
+  selectedGalleryIndex.value = (selectedGalleryIndex.value - 1 + galleryImages.length) % galleryImages.length
+}
+
+function nextGalleryImage() {
+  if (selectedGalleryIndex.value === null) return
+  selectedGalleryIndex.value = (selectedGalleryIndex.value + 1) % galleryImages.length
+}
+
+function handleKeyDown(e) {
+  if (!isLightboxOpen.value) return
+  if (e.key === 'Escape') closeLightbox()
+  if (e.key === 'ArrowLeft') prevGalleryImage()
+  if (e.key === 'ArrowRight') nextGalleryImage()
+}
+
 onMounted(() => {
   checkRoleAndParams()
   updateCountdown()
   timerId = setInterval(updateCountdown, 1000)
+  if (typeof window !== 'undefined') {
+    window.addEventListener('keydown', handleKeyDown)
+  }
 })
 
 onUnmounted(() => {
   if (timerId) clearInterval(timerId)
+  if (typeof window !== 'undefined') {
+    window.removeEventListener('keydown', handleKeyDown)
+    if (typeof document !== 'undefined') {
+      document.body.style.overflow = ''
+    }
+  }
 })
 </script>
 
@@ -652,8 +745,209 @@ onUnmounted(() => {
             <span>រាត្រីបើកសម្ពោធ៖ ថ្ងៃចន្ទ ទី ០៩ ខែ វិច្ឆិកា ឆ្នាំ ២០២៦ វេលាម៉ោង ៧:០០ យប់</span>
           </div>
 
+          <!-- Prompt Button to Scroll down to Gallery Section -->
+          <button
+            @click="scrollToGallery"
+            type="button"
+            class="mt-6 sm:mt-8 inline-flex items-center gap-2.5 px-6 py-3 rounded-full bg-gradient-to-r from-amber-400/20 via-amber-400/30 to-amber-400/20 hover:from-amber-400/35 hover:to-amber-400/50 border border-amber-400/60 text-amber-300 text-xs sm:text-sm font-bold shadow-[0_0_25px_rgba(251,191,36,0.25)] hover:scale-105 active:scale-95 transition-all cursor-pointer group"
+          >
+            <span class="material-symbols-outlined text-base text-amber-400 group-hover:rotate-12 transition-transform">photo_library</span>
+            <span>ទស្សនារូបភាពទិដ្ឋភាពក្នុងក្លឹប (៥ រូបភាព)</span>
+            <span class="material-symbols-outlined text-base animate-bounce">arrow_downward</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- ================= SECTION 3: CLUB INTERIOR LUXURY GALLERY (មួយផ្នែកទៀតនៅក្រោម COUNTDOWN) ================= -->
+      <section id="teaser-gallery" class="w-full flex flex-col items-center px-4 py-16 sm:py-24 relative z-10">
+        <div class="w-full max-w-6xl flex flex-col items-center">
+
+          <!-- Section 3 Header Badge -->
+          <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-400/10 border border-amber-400/30 text-amber-300 text-xs sm:text-sm font-semibold mb-4 shadow-[0_0_20px_rgba(251,191,36,0.2)]">
+            <span class="material-symbols-outlined text-base text-amber-400">photo_camera</span>
+            <span>ទិដ្ឋភាពជាក់ស្តែងក្នុងក្លឹប • EXCLUSIVE 3D PREVIEW</span>
+          </div>
+
+          <h2 class="text-2xl sm:text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-white to-amber-200 tracking-wide font-['Kantumruy_Pro','Battambang',sans-serif] filter drop-shadow-[0_0_25px_rgba(255,255,255,0.4)] text-center leading-tight px-2">
+            ទិដ្ឋភាពប្រណិតក្នុងក្លឹប SL CLUB
+          </h2>
+
+          <p class="mt-3 text-xs sm:text-sm md:text-base text-slate-300 font-['Kantumruy_Pro',sans-serif] text-center max-w-2xl leading-relaxed">
+            រចនាបទបែបអនាគត លំដាប់ VIP កម្រិតកំពូល បំពាក់ដោយបច្ចេកវិទ្យាភ្លើងឡាស៊ែរ 3D និងប្រព័ន្ធសំឡេងកម្រិតពិភពលោក
+          </p>
+
+          <span class="mt-2 text-[11px] sm:text-xs text-amber-400/90 font-medium tracking-wide flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-xs">zoom_in</span>
+            <span>(ចុចលើរូបនីមួយៗដើម្បីពង្រីកមើលទំហំធំពេញលេញ • Tap any photo to enlarge)</span>
+          </span>
+
+          <!-- ================= BENTO LUXURY GALLERY GRID (5 PHOTOS) ================= -->
+          <div class="mt-10 w-full grid grid-cols-12 gap-4 sm:gap-6">
+            <!-- PHOTO 1: Hero Large Featured (Arena & 3D Lights) -->
+            <div
+              @click="openLightbox(0)"
+              class="col-span-12 lg:col-span-7 relative group cursor-pointer rounded-2xl overflow-hidden bg-[#12131a] border border-white/15 hover:border-amber-400/80 transition-all duration-500 shadow-[0_10px_30px_rgba(0,0,0,0.8)] hover:shadow-[0_0_35px_rgba(251,191,36,0.35)] aspect-[16/10]"
+            >
+              <img
+                :src="galleryImages[0].src"
+                :alt="galleryImages[0].title"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                loading="lazy"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-transparent"></div>
+
+              <!-- Top Badge & Zoom Icon -->
+              <div class="absolute top-3 left-3 sm:top-4 sm:left-4 z-10 flex items-center gap-2">
+                <span class="px-2.5 py-1 rounded-full bg-black/80 backdrop-blur-md border border-amber-400/50 text-amber-300 text-[10px] sm:text-xs font-bold tracking-wider uppercase shadow-md">
+                  {{ galleryImages[0].tag }}
+                </span>
+              </div>
+              <div class="absolute top-3 right-3 sm:top-4 sm:right-4 z-10 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-black/70 backdrop-blur-md border border-white/30 text-white flex items-center justify-center group-hover:bg-amber-400 group-hover:text-black group-hover:scale-110 transition-all shadow-md">
+                <span class="material-symbols-outlined text-base">fullscreen</span>
+              </div>
+
+              <!-- Bottom Caption -->
+              <div class="absolute bottom-0 inset-x-0 p-4 sm:p-5 z-10 flex flex-col text-left">
+                <h3 class="text-base sm:text-lg md:text-xl font-bold text-white group-hover:text-amber-300 transition-colors font-['Kantumruy_Pro',sans-serif] leading-snug">
+                  {{ galleryImages[0].title }}
+                </h3>
+                <p class="text-xs text-slate-300 font-sans tracking-wide mt-0.5">
+                  {{ galleryImages[0].sub }}
+                </p>
+              </div>
+            </div>
+
+            <!-- PHOTO 2: Skybox Mezzanine -->
+            <div
+              @click="openLightbox(1)"
+              class="col-span-12 sm:col-span-6 lg:col-span-5 relative group cursor-pointer rounded-2xl overflow-hidden bg-[#12131a] border border-white/15 hover:border-amber-400/80 transition-all duration-500 shadow-[0_10px_30px_rgba(0,0,0,0.8)] hover:shadow-[0_0_35px_rgba(251,191,36,0.35)] aspect-[16/10]"
+            >
+              <img
+                :src="galleryImages[1].src"
+                :alt="galleryImages[1].title"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                loading="lazy"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-transparent"></div>
+
+              <div class="absolute top-3 left-3 sm:top-4 sm:left-4 z-10 flex items-center gap-2">
+                <span class="px-2.5 py-1 rounded-full bg-black/80 backdrop-blur-md border border-amber-400/50 text-amber-300 text-[10px] sm:text-xs font-bold tracking-wider uppercase shadow-md">
+                  {{ galleryImages[1].tag }}
+                </span>
+              </div>
+              <div class="absolute top-3 right-3 sm:top-4 sm:right-4 z-10 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-black/70 backdrop-blur-md border border-white/30 text-white flex items-center justify-center group-hover:bg-amber-400 group-hover:text-black group-hover:scale-110 transition-all shadow-md">
+                <span class="material-symbols-outlined text-base">fullscreen</span>
+              </div>
+
+              <div class="absolute bottom-0 inset-x-0 p-4 sm:p-5 z-10 flex flex-col text-left">
+                <h3 class="text-base sm:text-lg font-bold text-white group-hover:text-amber-300 transition-colors font-['Kantumruy_Pro',sans-serif] leading-snug">
+                  {{ galleryImages[1].title }}
+                </h3>
+                <p class="text-xs text-slate-300 font-sans tracking-wide mt-0.5">
+                  {{ galleryImages[1].sub }}
+                </p>
+              </div>
+            </div>
+
+            <!-- PHOTO 3: Center Hexagon DJ Booth -->
+            <div
+              @click="openLightbox(2)"
+              class="col-span-12 sm:col-span-6 lg:col-span-4 relative group cursor-pointer rounded-2xl overflow-hidden bg-[#12131a] border border-white/15 hover:border-amber-400/80 transition-all duration-500 shadow-[0_10px_30px_rgba(0,0,0,0.8)] hover:shadow-[0_0_35px_rgba(251,191,36,0.35)] aspect-[4/3]"
+            >
+              <img
+                :src="galleryImages[2].src"
+                :alt="galleryImages[2].title"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                loading="lazy"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-transparent"></div>
+
+              <div class="absolute top-3 left-3 z-10">
+                <span class="px-2.5 py-1 rounded-full bg-black/80 backdrop-blur-md border border-amber-400/50 text-amber-300 text-[10px] font-bold tracking-wider uppercase shadow-md">
+                  {{ galleryImages[2].tag }}
+                </span>
+              </div>
+              <div class="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-black/70 backdrop-blur-md border border-white/30 text-white flex items-center justify-center group-hover:bg-amber-400 group-hover:text-black group-hover:scale-110 transition-all shadow-md">
+                <span class="material-symbols-outlined text-sm">fullscreen</span>
+              </div>
+
+              <div class="absolute bottom-0 inset-x-0 p-3.5 sm:p-4 z-10 flex flex-col text-left">
+                <h3 class="text-sm sm:text-base font-bold text-white group-hover:text-amber-300 transition-colors font-['Kantumruy_Pro',sans-serif] leading-snug">
+                  {{ galleryImages[2].title }}
+                </h3>
+                <p class="text-[11px] text-slate-300 font-sans tracking-wide mt-0.5">
+                  {{ galleryImages[2].sub }}
+                </p>
+              </div>
+            </div>
+
+            <!-- PHOTO 4: VIP Lounge Sofas -->
+            <div
+              @click="openLightbox(3)"
+              class="col-span-12 sm:col-span-6 lg:col-span-4 relative group cursor-pointer rounded-2xl overflow-hidden bg-[#12131a] border border-white/15 hover:border-amber-400/80 transition-all duration-500 shadow-[0_10px_30px_rgba(0,0,0,0.8)] hover:shadow-[0_0_35px_rgba(251,191,36,0.35)] aspect-[4/3]"
+            >
+              <img
+                :src="galleryImages[3].src"
+                :alt="galleryImages[3].title"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                loading="lazy"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-transparent"></div>
+
+              <div class="absolute top-3 left-3 z-10">
+                <span class="px-2.5 py-1 rounded-full bg-black/80 backdrop-blur-md border border-amber-400/50 text-amber-300 text-[10px] font-bold tracking-wider uppercase shadow-md">
+                  {{ galleryImages[3].tag }}
+                </span>
+              </div>
+              <div class="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-black/70 backdrop-blur-md border border-white/30 text-white flex items-center justify-center group-hover:bg-amber-400 group-hover:text-black group-hover:scale-110 transition-all shadow-md">
+                <span class="material-symbols-outlined text-sm">fullscreen</span>
+              </div>
+
+              <div class="absolute bottom-0 inset-x-0 p-3.5 sm:p-4 z-10 flex flex-col text-left">
+                <h3 class="text-sm sm:text-base font-bold text-white group-hover:text-amber-300 transition-colors font-['Kantumruy_Pro',sans-serif] leading-snug">
+                  {{ galleryImages[3].title }}
+                </h3>
+                <p class="text-[11px] text-slate-300 font-sans tracking-wide mt-0.5">
+                  {{ galleryImages[3].sub }}
+                </p>
+              </div>
+            </div>
+
+            <!-- PHOTO 5: Bar & Dance Floor -->
+            <div
+              @click="openLightbox(4)"
+              class="col-span-12 sm:col-span-6 lg:col-span-4 relative group cursor-pointer rounded-2xl overflow-hidden bg-[#12131a] border border-white/15 hover:border-amber-400/80 transition-all duration-500 shadow-[0_10px_30px_rgba(0,0,0,0.8)] hover:shadow-[0_0_35px_rgba(251,191,36,0.35)] aspect-[4/3]"
+            >
+              <img
+                :src="galleryImages[4].src"
+                :alt="galleryImages[4].title"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                loading="lazy"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-transparent"></div>
+
+              <div class="absolute top-3 left-3 z-10">
+                <span class="px-2.5 py-1 rounded-full bg-black/80 backdrop-blur-md border border-amber-400/50 text-amber-300 text-[10px] font-bold tracking-wider uppercase shadow-md">
+                  {{ galleryImages[4].tag }}
+                </span>
+              </div>
+              <div class="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-black/70 backdrop-blur-md border border-white/30 text-white flex items-center justify-center group-hover:bg-amber-400 group-hover:text-black group-hover:scale-110 transition-all shadow-md">
+                <span class="material-symbols-outlined text-sm">fullscreen</span>
+              </div>
+
+              <div class="absolute bottom-0 inset-x-0 p-3.5 sm:p-4 z-10 flex flex-col text-left">
+                <h3 class="text-sm sm:text-base font-bold text-white group-hover:text-amber-300 transition-colors font-['Kantumruy_Pro',sans-serif] leading-snug">
+                  {{ galleryImages[4].title }}
+                </h3>
+                <p class="text-[11px] text-slate-300 font-sans tracking-wide mt-0.5">
+                  {{ galleryImages[4].sub }}
+                </p>
+              </div>
+            </div>
+          </div>
+
           <!-- ================= ACTION & SOCIAL BUTTONS ================= -->
-          <div class="mt-8 flex flex-wrap items-center justify-center gap-3 sm:gap-4 w-full">
+          <div class="mt-14 sm:mt-16 flex flex-wrap items-center justify-center gap-3 sm:gap-4 w-full">
             <button
               @click="openMaps"
               type="button"
@@ -986,6 +1280,99 @@ onUnmounted(() => {
               class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 text-black text-xs font-bold shadow-md cursor-pointer"
             >
               ចូល Admin
+            </button>
+          </div>
+        </div>
+      </div>
+    </Transition>
+    <!-- ================= FULLSCREEN LUXURY LIGHTBOX MODAL ================= -->
+    <Transition name="fade">
+      <div
+        v-if="isLightboxOpen && selectedGalleryIndex !== null"
+        class="fixed inset-0 z-[150] flex flex-col items-center justify-between p-3 sm:p-6 bg-black/95 backdrop-blur-2xl select-none"
+        @click.self="closeLightbox"
+      >
+        <!-- Top Controls Bar -->
+        <div class="w-full max-w-5xl flex items-center justify-between z-20 pt-1 pb-3 px-2 border-b border-white/10">
+          <div class="flex items-center gap-2 sm:gap-3">
+            <img src="/logo.jpg" alt="SL Club" class="w-8 h-8 rounded-lg object-contain border border-amber-400/40" />
+            <div class="flex flex-col">
+              <span class="text-xs sm:text-sm font-bold text-white tracking-widest uppercase font-sans">SL CLUB</span>
+              <span class="text-[10px] text-amber-400 tracking-wider">3D INTERIOR GALLERY</span>
+            </div>
+          </div>
+
+          <!-- Counter & Close -->
+          <div class="flex items-center gap-3">
+            <span class="px-3 py-1 rounded-full bg-white/10 border border-white/20 text-xs text-amber-300 font-mono font-bold">
+              {{ selectedGalleryIndex + 1 }} / {{ galleryImages.length }}
+            </span>
+            <button
+              @click="closeLightbox"
+              type="button"
+              class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white flex items-center justify-center transition-all cursor-pointer hover:scale-110 active:scale-95"
+              title="បិទ (Close - Esc)"
+            >
+              <span class="material-symbols-outlined text-lg">close</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Center Image Stage with Next/Prev Arrows -->
+        <div class="relative w-full max-w-5xl flex-1 flex items-center justify-center my-auto py-2 px-1">
+          <!-- Previous Button -->
+          <button
+            @click.stop="prevGalleryImage"
+            type="button"
+            class="absolute left-1 sm:left-3 z-30 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/70 hover:bg-amber-400 text-white hover:text-black border border-white/30 hover:border-amber-400 flex items-center justify-center transition-all cursor-pointer shadow-2xl hover:scale-110 active:scale-90"
+            title="រូបមុន (Previous)"
+          >
+            <span class="material-symbols-outlined text-2xl sm:text-3xl">chevron_left</span>
+          </button>
+
+          <!-- Main Image -->
+          <div class="relative max-h-[62vh] sm:max-h-[70vh] flex items-center justify-center">
+            <img
+              :src="galleryImages[selectedGalleryIndex].src"
+              :alt="galleryImages[selectedGalleryIndex].title"
+              class="max-h-[62vh] sm:max-h-[70vh] w-auto max-w-full object-contain rounded-2xl shadow-[0_0_80px_rgba(0,0,0,0.9),0_0_35px_rgba(251,191,36,0.25)] border border-white/20 transition-all duration-300"
+            />
+          </div>
+
+          <!-- Next Button -->
+          <button
+            @click.stop="nextGalleryImage"
+            type="button"
+            class="absolute right-1 sm:right-3 z-30 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/70 hover:bg-amber-400 text-white hover:text-black border border-white/30 hover:border-amber-400 flex items-center justify-center transition-all cursor-pointer shadow-2xl hover:scale-110 active:scale-90"
+            title="រូបបន្ទាប់ (Next)"
+          >
+            <span class="material-symbols-outlined text-2xl sm:text-3xl">chevron_right</span>
+          </button>
+        </div>
+
+        <!-- Bottom Caption & Thumbnails Strip -->
+        <div class="w-full max-w-5xl flex flex-col items-center gap-3 z-20 pb-2 px-2">
+          <!-- Caption -->
+          <div class="text-center px-4">
+            <h4 class="text-base sm:text-lg md:text-xl font-bold text-white font-['Kantumruy_Pro',sans-serif]">
+              {{ galleryImages[selectedGalleryIndex].title }}
+            </h4>
+            <p class="text-xs sm:text-sm text-amber-300/90 font-sans tracking-wide mt-0.5">
+              {{ galleryImages[selectedGalleryIndex].sub }}
+            </p>
+          </div>
+
+          <!-- Thumbnails -->
+          <div class="flex items-center justify-center gap-2 sm:gap-3 overflow-x-auto py-1 max-w-full">
+            <button
+              v-for="(img, idx) in galleryImages"
+              :key="img.id"
+              @click.stop="selectedGalleryIndex = idx"
+              type="button"
+              class="relative w-14 sm:w-18 aspect-[16/10] rounded-lg overflow-hidden border-2 transition-all cursor-pointer shrink-0"
+              :class="selectedGalleryIndex === idx ? 'border-amber-400 scale-105 shadow-[0_0_15px_rgba(251,191,36,0.8)]' : 'border-white/20 opacity-50 hover:opacity-100'"
+            >
+              <img :src="img.src" :alt="img.title" class="w-full h-full object-cover" />
             </button>
           </div>
         </div>
