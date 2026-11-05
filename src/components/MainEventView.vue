@@ -1,14 +1,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 
-const props = defineProps({
-  isMusicPlaying: {
-    type: Boolean,
-    default: false
-  }
-})
-
-const emit = defineEmits(['toggle-music', 'replay-door'])
+const emit = defineEmits(['replay-door'])
 
 // --- Reload / Grand Entrance Door State ---
 const isDoorOpen = ref(false)
@@ -55,7 +48,6 @@ function toggleVideo() {
 function openDoor() {
   if (isDoorOpen.value) return
   isDoorOpen.value = true
-  emit('toggle-music', true) // Request audio start
   setTimeout(() => {
     showIntroScreen.value = false
   }, 1300)
@@ -365,28 +357,6 @@ function scrollToSection(id) {
 
         <!-- Right: Action Buttons -->
         <div class="flex items-center gap-2 sm:gap-3 shrink-0">
-          <button
-            @click="$emit('toggle-music')"
-            :title="isMusicPlaying ? 'បិទភ្លេង (Pause Music)' : 'ចាក់ភ្លេង (Play Music)'"
-            type="button"
-            :class="[
-              'h-9 sm:h-10 px-2.5 sm:px-3 rounded-full flex items-center gap-1.5 transition cursor-pointer border shadow-sm shrink-0',
-              isMusicPlaying
-                ? 'bg-primary/20 border-primary text-primary shadow-[0_0_12px_rgba(242,202,80,0.4)]'
-                : 'bg-black/60 border-primary/30 text-slate-400 hover:text-primary hover:border-primary'
-            ]"
-          >
-            <div v-if="isMusicPlaying" class="flex items-end gap-0.5 h-3.5 w-3.5">
-              <span class="w-0.5 bg-primary rounded-full animate-pulse h-3.5"></span>
-              <span class="w-0.5 bg-primary rounded-full animate-bounce h-2"></span>
-              <span class="w-0.5 bg-primary rounded-full animate-pulse h-3"></span>
-            </div>
-            <span v-else class="material-symbols-outlined text-[19px] sm:text-[21px]">music_off</span>
-            <span class="font-label-sm text-[11px] sm:text-xs font-bold hidden sm:inline">
-              {{ isMusicPlaying ? 'MUSIC ON' : 'MUSIC OFF' }}
-            </span>
-          </button>
-
           <button
             @click="openReservationModal()"
             type="button"
@@ -1131,3 +1101,4 @@ function scrollToSection(id) {
 
   </div>
 </template>
+

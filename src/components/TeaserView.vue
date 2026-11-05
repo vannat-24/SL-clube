@@ -2,17 +2,13 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 
 const props = defineProps({
-  isMusicPlaying: {
-    type: Boolean,
-    default: false
-  },
   targetDate: {
     type: Date,
     default: () => new Date('2026-11-09T19:00:00')
   }
 })
 
-const emit = defineEmits(['toggle-music', 'view-official'])
+const emit = defineEmits(['view-official'])
 
 // Video ref & state
 const videoRef = ref(null)
@@ -130,22 +126,6 @@ onUnmounted(() => {
           <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
           <span>បើកសម្ពោធ៖ ថ្ងៃទី ០៩ វិច្ឆិកា</span>
         </div>
-
-        <!-- Music Toggle Button (Persistent & Looping) -->
-        <button
-          @click="emit('toggle-music')"
-          type="button"
-          class="flex items-center gap-1.5 px-3 py-1.5 rounded-full backdrop-blur-md border transition-all duration-300 cursor-pointer text-xs font-semibold"
-          :class="isMusicPlaying
-            ? 'bg-amber-400/20 border-amber-400 text-amber-300 shadow-[0_0_15px_rgba(251,191,36,0.5)]'
-            : 'bg-white/10 border-white/20 text-slate-300 hover:bg-white/20'"
-          :title="isMusicPlaying ? 'បិទសម្លេង' : 'ចាក់បទភ្លេង'"
-        >
-          <span class="material-symbols-outlined text-base" :class="{ 'animate-spin': isMusicPlaying }">
-            {{ isMusicPlaying ? 'music_note' : 'music_off' }}
-          </span>
-          <span class="hidden xs:inline">{{ isMusicPlaying ? 'ភ្លេងបើក' : 'ភ្លេងបិទ' }}</span>
-        </button>
 
         <!-- Preview Nov 9 Event (Quick Test Toggle) -->
         <button
@@ -478,3 +458,4 @@ onUnmounted(() => {
     </div>
   </div>
 </template>
+
