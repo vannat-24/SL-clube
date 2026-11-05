@@ -22,37 +22,6 @@
   }
 }
 
-/* Chrome Frame & Rivets matching Artboard 1 */
-.chrome-card-frame {
-  position: relative;
-  border: 3px solid rgba(210, 218, 226, 0.85);
-  box-shadow: 
-    0 0 0 1px rgba(255, 255, 255, 0.4),
-    0 0 25px rgba(255, 255, 255, 0.1),
-    0 25px 60px rgba(0, 0, 0, 0.95),
-    inset 0 0 25px rgba(0, 0, 0, 0.7);
-  background: linear-gradient(180deg, rgba(18, 18, 20, 0.82) 0%, rgba(10, 10, 12, 0.92) 100%);
-}
-
-.chrome-screw {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, #ffffff, #a0a7b0 55%, #4b5563 100%);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.9), inset 0 1px 1px rgba(255, 255, 255, 0.9);
-  position: relative;
-}
-.chrome-screw::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 20%;
-  right: 20%;
-  height: 1.5px;
-  background: #2b3038;
-  transform: translateY(-50%) rotate(45deg);
-}
-
 ::-webkit-scrollbar {
   width: 6px;
 }
