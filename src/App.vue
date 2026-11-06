@@ -39,34 +39,39 @@ function verifyAdminPin() {
   }
 }
 
-function startIntroVideo() {
+function autoStartIntro() {
   isPlayingIntro.value = true
+  showIntroOverlay.value = true
 
-  // Synchronous play call within the user gesture context
+  // Auto-play the opening entrance video automatically on link load
   if (introVideoRef.value) {
     try {
+      introVideoRef.value.muted = true
       introVideoRef.value.currentTime = 0
+      introVideoRef.value.playbackRate = 1.25 // Smooth & brisk 5s opening
       const playPromise = introVideoRef.value.play()
       if (playPromise !== undefined) {
         playPromise.catch(err => {
-          console.warn("Video playback blocked or failed:", err)
+          console.warn("Autoplay was prevented by browser policy, opening directly:", err)
           finishIntroVideo()
         })
       }
     } catch (e) {
-      console.warn("Synchronous play exception:", e)
+      console.warn("Autoplay exception, opening directly:", e)
       finishIntroVideo()
     }
-  } else {
-    finishIntroVideo()
   }
 
-  // Safety timer fallback: auto-finish after 7.5 seconds so guest is NEVER stuck
+  // Safety timer fallback: auto-finish within 5 seconds so guest is never waiting
   setTimeout(() => {
     if (showIntroOverlay.value) {
       finishIntroVideo()
     }
-  }, 7500)
+  }, 5000)
+}
+
+function startIntroVideo() {
+  autoStartIntro()
 }
 
 function finishIntroVideo() {
@@ -76,7 +81,7 @@ function finishIntroVideo() {
 
 function replayIntro() {
   showIntroOverlay.value = true
-  isPlayingIntro.value = false
+  autoStartIntro()
 }
 
 function checkDateGate() {
@@ -109,6 +114,13 @@ let dateCheckInterval = null
 onMounted(() => {
   checkDateGate()
   dateCheckInterval = setInterval(checkDateGate, 1000)
+
+  // Open auto right away when guest opens link - no button click needed
+  if (!isAdmin.value) {
+    autoStartIntro()
+  } else {
+    showIntroOverlay.value = false
+  }
 })
 
 onUnmounted(() => {
@@ -118,20 +130,19 @@ onUnmounted(() => {
 
 <template>
   <div class="relative min-h-screen bg-[#08080a] text-slate-100 overflow-x-hidden">
-    <!-- ================= GRAND LUXURY VIP VIDEO INTRO OVERLAY ================= -->
+    <!-- ================= GRAND LUXURY VIP VIDEO INTRO OVERLAY (AUTO-OPENS ON LINK LOAD) ================= -->
     <Transition name="fade">
       <div
         v-if="showIntroOverlay"
-        class="fixed inset-0 z-[999] flex items-center justify-center bg-black overflow-hidden select-none"
+        class="fixed inset-0 z-[999] flex items-center justify-center bg-black overflow-hidden select-none cursor-pointer"
+        @click="finishIntroVideo"
+        title="ចុចលើអេក្រង់ដើម្បីរំលងចូលទំព័រភ្លាមៗ"
       >
-        <!-- Full-Screen Video Player Layer (Mounted in DOM, never display:none) -->
-        <div
-          class="absolute inset-0 bg-black transition-opacity duration-700"
-          :class="isPlayingIntro ? 'opacity-100 z-30 pointer-events-auto' : 'opacity-0 -z-10 pointer-events-none'"
-          @click="finishIntroVideo"
-        >
+        <!-- Full-Screen Video Player Layer -->
+        <div class="absolute inset-0 bg-black pointer-events-auto">
           <video
             ref="introVideoRef"
+            autoplay
             playsinline
             webkit-playsinline
             muted
@@ -143,82 +154,35 @@ onUnmounted(() => {
             <source src="/intro-video.mp4" type="video/mp4" />
           </video>
 
-          <!-- Skip Button -->
-          <button
-            @click.stop="finishIntroVideo"
-            type="button"
-            class="absolute top-6 right-6 z-40 flex items-center gap-1.5 px-4 py-2 rounded-full bg-black/60 hover:bg-black/80 backdrop-blur-md border border-white/20 text-white text-xs font-semibold shadow-lg hover:scale-105 active:scale-95 transition-all cursor-pointer pointer-events-auto"
-          >
-            <span>រំលង (Skip)</span>
-            <span class="material-symbols-outlined text-sm">skip_next</span>
-          </button>
-        </div>
+          <!-- Top Navigation Bar -->
+          <div class="absolute top-4 sm:top-6 inset-x-4 sm:inset-x-6 z-40 flex items-center justify-between pointer-events-none">
+            <!-- Discreet Admin Portal Button -->
+            <button
+              @click.stop="openAdminLogin"
+              type="button"
+              class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/60 hover:bg-black/80 backdrop-blur-md border border-white/20 text-slate-300 hover:text-amber-400 text-xs font-medium cursor-pointer pointer-events-auto transition-colors"
+            >
+              <span class="material-symbols-outlined text-xs text-amber-400">lock</span>
+              <span>Admin</span>
+            </button>
 
-        <!-- Welcoming Invitation Card Before Click -->
-        <div
-          class="relative z-20 flex flex-col items-center text-center px-4 max-w-md mx-auto transition-opacity duration-500"
-          :class="isPlayingIntro ? 'opacity-0 pointer-events-none' : 'opacity-100 pointer-events-auto'"
-        >
-          <!-- Background Atmospheric Glow (pointer-events-none ensures no click blocking) -->
-          <div class="absolute -inset-24 bg-radial-[circle_at_50%_50%] from-amber-400/25 via-amber-500/5 to-transparent blur-3xl rounded-full pointer-events-none"></div>
-
-          <!-- SL Club Emblem -->
-          <div class="relative mb-6 cursor-pointer" @click="startIntroVideo">
-            <div class="w-28 h-28 sm:w-36 sm:h-36 rounded-full p-1 bg-gradient-to-b from-slate-200 via-amber-300 to-amber-600 shadow-[0_0_50px_rgba(251,191,36,0.6)]">
-              <div class="w-full h-full rounded-full bg-black p-2 flex items-center justify-center overflow-hidden border border-amber-400/50">
-                <img src="/logo.jpg" alt="SL Club" class="w-full h-full object-contain filter drop-shadow-[0_0_12px_rgba(251,191,36,0.8)]" />
-              </div>
-            </div>
+            <!-- Skip Button -->
+            <button
+              @click.stop="finishIntroVideo"
+              type="button"
+              class="flex items-center gap-1.5 px-4 py-2 rounded-full bg-black/60 hover:bg-black/80 backdrop-blur-md border border-white/20 text-white text-xs font-semibold shadow-lg hover:scale-105 active:scale-95 transition-all cursor-pointer pointer-events-auto"
+            >
+              <span>រំលង (Skip)</span>
+              <span class="material-symbols-outlined text-sm">skip_next</span>
+            </button>
           </div>
 
-          <!-- VIP Honorable Guest Badge -->
-          <div class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-black/80 border border-amber-400/40 text-amber-300 text-xs font-bold tracking-widest uppercase mb-4 shadow-md backdrop-blur-md pointer-events-none">
-            <span class="material-symbols-outlined text-sm">stars</span>
-            <span>VIP EXCLUSIVE INVITATION</span>
+          <!-- Bottom Cue -->
+          <div class="absolute bottom-6 sm:bottom-8 inset-x-0 z-30 flex justify-center pointer-events-none">
+            <span class="px-4 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-slate-300 text-[11px] font-medium tracking-wider">
+              (ចុចលើអេក្រង់ដើម្បីចូលទំព័រភ្លាមៗ • Tap to skip)
+            </span>
           </div>
-
-          <!-- Dynamic Guest Name or Default General Greeting -->
-          <div v-if="guestName" class="mb-4">
-            <span class="text-xs text-amber-300/90 font-medium">សូមគោរពអញ្ជើញ</span>
-            <h2 class="text-2xl sm:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-white to-amber-300 py-1 drop-shadow-[0_0_15px_rgba(251,191,36,0.7)] font-['Kantumruy_Pro','Battambang',sans-serif]">
-              {{ guestName }}
-            </h2>
-            <span class="text-xs text-slate-300/80">ចូលរួមពិធីបើកសម្ពោធជាផ្លូវការ SL CLUB</span>
-          </div>
-          <div v-else class="mb-4">
-            <h2 class="text-xl sm:text-2xl font-bold text-white font-['Kantumruy_Pro',sans-serif]">
-              សូមគោរពអញ្ជើញ ឯកឧត្តម លោកជំទាវ លោក លោកស្រី
-            </h2>
-            <p class="text-xs text-slate-300 mt-1">ចូលរួមពិធីបើកសម្ពោធជាផ្លូវការ SL CLUB Battambang</p>
-          </div>
-
-          <p class="text-xs sm:text-sm text-slate-400 mb-8 max-w-xs leading-relaxed font-sans uppercase tracking-wider">
-            GRAND OPENING VIP GALA NIGHT • 09 NOV 2026
-          </p>
-
-          <!-- Main Interactive Button to Play Video and Enter Site -->
-          <button
-            @click="startIntroVideo"
-            type="button"
-            class="relative z-30 group flex items-center justify-center gap-3 px-8 sm:px-10 py-3.5 sm:py-4 rounded-full bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 text-black font-extrabold text-sm sm:text-base shadow-[0_0_35px_rgba(251,191,36,0.7)] hover:shadow-[0_0_55px_rgba(251,191,36,0.95)] hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer pointer-events-auto"
-          >
-            <span class="material-symbols-outlined text-xl group-hover:scale-110 transition-transform">lock_open</span>
-            <span>ចុចបើកសំបុត្រអញ្ជើញ VIP</span>
-          </button>
-
-          <span class="text-[11px] text-slate-400 mt-3 font-light tracking-wide pointer-events-none">
-            (ចុចដើម្បីទស្សនាវីដេអូបើកទ្វារចូលវេបសាយ)
-          </span>
-
-          <!-- Direct Admin Login Button on Intro Screen -->
-          <button
-            @click.stop="openAdminLogin"
-            type="button"
-            class="relative z-30 mt-5 text-[11px] text-slate-500 hover:text-amber-300 flex items-center gap-1 transition-colors cursor-pointer py-1 px-3 rounded-full hover:bg-white/5"
-          >
-            <span class="material-symbols-outlined text-xs">admin_panel_settings</span>
-            <span>Admin Portal (សម្រាប់អ្នកគ្រប់គ្រង)</span>
-          </button>
         </div>
       </div>
     </Transition>
