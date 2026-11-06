@@ -1,14 +1,10 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import TeaserView from './components/TeaserView.vue'
-import MainEventView from './components/MainEventView.vue'
 
 // --- Target Date: 09 November 2026 19:00:00 ---
 const TARGET_DATE = new Date('2026-11-09T19:00:00')
 
-// Gate state: before Nov 9, default to TeaserView; on/after Nov 9, auto-unlock MainEventView
-const isNov9OrLater = ref(false)
-const previewOfficial = ref(false)
 const isAdmin = ref(false)
 const guestName = ref('')
 
@@ -105,11 +101,6 @@ function checkDateGate() {
     }
   }
 }
-
-// Current active view: Do NOT auto-unlock official view for guests.
-// Guests always stay on TeaserView (Invitation & Countdown / Event Started).
-// Only Admin can manually preview the official view if explicitly toggled.
-const showOfficial = computed(() => isAdmin.value && previewOfficial.value)
 
 let dateCheckInterval = null
 
@@ -239,58 +230,8 @@ onUnmounted(() => {
       </div>
     </Transition>
 
-    <!-- FLOATING DEV / TEST CONTROLLER (Only visible to Admin) -->
-    <aside
-      v-if="!isNov9OrLater && isAdmin"
-      class="fixed bottom-4 right-4 z-[9999] flex items-center gap-2"
-    >
-      <button
-        @click="replayIntro"
-        type="button"
-        class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/85 backdrop-blur-xl border border-amber-400/50 text-amber-300 font-bold text-xs shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer"
-        title="ចាក់វីដេអូបើកទ្វារឡើងវិញ"
-      >
-        <span class="material-symbols-outlined text-xs">replay</span>
-        <span>Replay Video</span>
-      </button>
-
-      <button
-        v-if="!previewOfficial"
-        @click="previewOfficial = true"
-        type="button"
-        class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 text-black font-bold text-xs shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer"
-        title="តេស្តមើលទំព័រផ្លូវការក្រោយចប់ Countdown"
-      >
-        <span class="material-symbols-outlined text-xs">visibility</span>
-        <span>តេស្តមើលទំព័រផ្លូវការ</span>
-      </button>
-
-      <button
-        v-else
-        @click="previewOfficial = false"
-        type="button"
-        class="flex items-center gap-2 px-4 py-2 rounded-full bg-black/85 backdrop-blur-xl border border-amber-400 text-amber-300 font-bold text-xs sm:text-sm shadow-[0_0_20px_rgba(251,191,36,0.5)] hover:scale-105 active:scale-95 transition-all cursor-pointer"
-      >
-        <span class="material-symbols-outlined text-sm">arrow_back</span>
-        <span>ត្រឡប់ទៅទំព័រ Teaser (មុនថ្ងៃទី 9)</span>
-      </button>
-    </aside>
-
-    <!-- DYNAMIC VIEW RENDERER -->
-    <Transition name="fade" mode="out-in">
-      <!-- 1. TEASER VIEW: Shown Before November 9th -->
-      <TeaserView
-        v-if="!showOfficial"
-        :target-date="TARGET_DATE"
-        @view-official="previewOfficial = true"
-      />
-
-      <!-- 2. OFFICIAL VIP EVENT VIEW: Shown on & after November 9th -->
-      <MainEventView
-        v-else
-        @replay-door="replayIntro"
-      />
-    </Transition>
+    <!-- MAIN INVITATION VIEW -->
+    <TeaserView :target-date="TARGET_DATE" />
   </div>
 </template>
 

@@ -456,53 +456,32 @@ onUnmounted(() => {
       <div class="flex items-center gap-2 sm:gap-3">
         <!-- 1. ADMIN MODE CONTROLS (Only visible if Role is Admin) -->
         <template v-if="isAdmin">
-          <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-400/20 border border-amber-400/50 text-amber-300 text-[11px] font-bold">
+          <!-- Admin Badge (Hidden on mobile phones) -->
+          <div class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-400/20 border border-amber-400/50 text-amber-300 text-[11px] font-bold">
             <span class="material-symbols-outlined text-sm">shield_person</span>
-            <span class="hidden sm:inline">ADMIN</span>
+            <span>ADMIN</span>
           </div>
 
-          <!-- Create Link Button -->
+          <!-- Create Link Button (Icon only on phone, full text on tablet/desktop) -->
           <button
             @click="openNameModal"
             type="button"
-            class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 text-black text-xs font-bold shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer"
+            class="flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 text-black text-xs font-bold shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer"
+            title="បង្កើត Link ភ្ញៀវ"
           >
-            <span class="material-symbols-outlined text-sm">add_circle</span>
-            <span>បង្កើត Link ភ្ញៀវ</span>
+            <span class="material-symbols-outlined text-base sm:text-sm">add_circle</span>
+            <span class="hidden sm:inline">បង្កើត Link ភ្ញៀវ</span>
           </button>
 
-          <!-- Guest List Button -->
+          <!-- Guest List Button (Icon only on phone, full text on tablet/desktop) -->
           <button
             @click="isGuestListModalOpen = true"
             type="button"
-            class="flex items-center gap-1 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-semibold backdrop-blur-md transition-all cursor-pointer"
+            class="flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-semibold backdrop-blur-md transition-all cursor-pointer"
             title="មើលបញ្ជីភ្ញៀវដែលបានអញ្ជើញ"
           >
-            <span class="material-symbols-outlined text-sm">list_alt</span>
+            <span class="material-symbols-outlined text-base sm:text-sm">list_alt</span>
             <span class="hidden sm:inline">បញ្ជីភ្ញៀវ ({{ invitedGuests.length }})</span>
-          </button>
-
-          <!-- Preview Official Page Button -->
-          <button
-            @click="$emit('view-official')"
-            type="button"
-            class="flex items-center gap-1 px-3 py-1.5 rounded-full bg-amber-400/20 hover:bg-amber-400/35 border border-amber-400/50 text-amber-300 text-xs font-semibold backdrop-blur-md transition-all cursor-pointer"
-            title="តេស្តមើលទំព័រផ្លូវការ (ក្រោយចប់ Countdown)"
-          >
-            <span class="material-symbols-outlined text-sm">visibility</span>
-            <span class="hidden md:inline">ទំព័រផ្លូវការ (ក្រោយ Countdown)</span>
-          </button>
-
-          <!-- Toggle Test Event Started Button -->
-          <button
-            @click="testEventStarted = !testEventStarted"
-            type="button"
-            class="flex items-center gap-1 px-3 py-1.5 rounded-full border text-xs font-semibold backdrop-blur-md transition-all cursor-pointer"
-            :class="testEventStarted ? 'bg-emerald-500/25 border-emerald-400 text-emerald-300' : 'bg-white/10 hover:bg-white/20 border-white/20 text-white'"
-            :title="testEventStarted ? 'ចុចដើម្បីបិទការតេស្ត' : 'តេស្តមើលពេលកម្មវិធីបានចាប់ផ្តើម'"
-          >
-            <span class="material-symbols-outlined text-sm">{{ testEventStarted ? 'check_circle' : 'toggle_off' }}</span>
-            <span class="hidden md:inline">{{ testEventStarted ? 'កំពុងតេស្ត៖ កម្មវិធីចាប់ផ្តើម' : 'តេស្តពេលចាប់ផ្តើម' }}</span>
           </button>
 
           <!-- Exit Admin Button -->
@@ -1321,6 +1300,60 @@ onUnmounted(() => {
               <span class="material-symbols-outlined text-xs">lock</span>
               <span>Admin Portal</span>
             </button>
+          </div>
+
+          <!-- ================= DEVELOPER & CREATOR CREDITS (ស្នាដៃអ្នកផលិត) ================= -->
+          <div class="mt-8 pt-6 border-t border-white/10 w-full max-w-md flex flex-col items-center text-center">
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/[0.04] border border-white/10 text-[10px] sm:text-[11px] text-slate-400 font-medium tracking-wider mb-2.5">
+              <span class="material-symbols-outlined text-xs text-amber-400">code</span>
+              <span>រចនា និងអភិវឌ្ឍន៍ដោយ • DESIGNED &amp; DEVELOPED BY</span>
+            </div>
+
+            <!-- Creator Name -->
+            <h4 class="text-xs sm:text-sm font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-white to-amber-300 tracking-wider uppercase font-sans">
+              KA VAN
+            </h4>
+
+            <!-- Contact Links: Tel, Telegram, Facebook -->
+            <div class="mt-3 flex flex-wrap items-center justify-center gap-2 sm:gap-2.5">
+              <!-- Tel -->
+              <a
+                href="tel:010272190"
+                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/15 border border-white/10 text-[11px] text-slate-300 hover:text-amber-300 transition-all cursor-pointer shadow-sm hover:scale-105 active:scale-95"
+                title="ទូរស័ព្ទ៖ 010 272 190"
+              >
+                <span class="material-symbols-outlined text-xs text-emerald-400">call</span>
+                <span>010 272 190</span>
+              </a>
+
+              <!-- Telegram -->
+              <a
+                href="https://t.me/+85510272190"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-sky-500/10 hover:bg-sky-500/25 border border-sky-400/25 text-[11px] text-sky-300 hover:text-sky-200 transition-all cursor-pointer shadow-sm hover:scale-105 active:scale-95"
+                title="Telegram៖ 010 272 190"
+              >
+                <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.75-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/>
+                </svg>
+                <span>Telegram: 010 272 190</span>
+              </a>
+
+              <!-- Facebook -->
+              <a
+                href="https://www.facebook.com/share/v/1EvBvVWaLn/?mibextid=wwXIfr"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-600/10 hover:bg-blue-600/25 border border-blue-400/25 text-[11px] text-blue-300 hover:text-blue-200 transition-all cursor-pointer shadow-sm hover:scale-105 active:scale-95"
+                title="Facebook: ka van"
+              >
+                <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                </svg>
+                <span>Facebook: ka van</span>
+              </a>
+            </div>
           </div>
         </div>
       </section>
