@@ -189,7 +189,7 @@ function confirmReservation() {
 }
 
 function openDirections() {
-  window.open('https://maps.app.goo.gl/hSJKgn4A28KUYYnm8', '_blank')
+  window.open('https://maps.app.goo.gl/wSAkVRTDNWv1T6yB6?g_st=ic', '_blank')
 }
 
 function scrollToSection(id) {
@@ -466,13 +466,13 @@ function scrollToSection(id) {
           </div>
 
           <div class="pt-3 border-t border-outline-variant/30 grid grid-cols-2 gap-2">
-            <a href="https://t.me/SLCLUB33" target="_blank" rel="noopener noreferrer" class="py-2.5 px-3 rounded-xl bg-[#229ED9]/15 hover:bg-[#229ED9]/25 text-[#229ED9] border border-[#229ED9]/30 text-xs font-semibold flex items-center justify-center gap-2 transition">
+            <a href="https://t.me/+85516777571" target="_blank" rel="noopener noreferrer" class="py-2.5 px-3 rounded-xl bg-[#229ED9]/15 hover:bg-[#229ED9]/25 text-[#229ED9] border border-[#229ED9]/30 text-xs font-semibold flex items-center justify-center gap-2 transition">
               <svg class="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.121l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.458c.538-.196 1.006.128.832.943z"/></svg>
               <span>Telegram</span>
             </a>
-            <a href="tel:+18005557528" class="py-2.5 px-3 rounded-xl bg-primary/15 hover:bg-primary/25 text-primary border border-primary/30 text-xs font-semibold flex items-center justify-center gap-2 transition">
+            <a href="tel:+85516777571" class="py-2.5 px-3 rounded-xl bg-primary/15 hover:bg-primary/25 text-primary border border-primary/30 text-xs font-semibold flex items-center justify-center gap-2 transition">
               <span class="material-symbols-outlined text-[18px]">call</span>
-              <span>ទូរស័ព្ទ VIP</span>
+              <span>016 777 571</span>
             </a>
           </div>
 
@@ -809,7 +809,7 @@ function scrollToSection(id) {
 
                 <div class="pt-2 flex flex-wrap gap-3">
                   <a
-                    href="https://maps.app.goo.gl/hSJKgn4A28KUYYnm8"
+                    href="https://maps.app.goo.gl/wSAkVRTDNWv1T6yB6?g_st=ic"
                     target="_blank"
                     rel="noopener noreferrer"
                     class="h-10 px-5 rounded-full bg-secondary-container/90 text-secondary hover:bg-secondary-container transition-all flex items-center gap-2 font-label-sm text-xs sm:text-sm font-bold cursor-pointer border border-primary/20 shadow-md"
@@ -819,13 +819,21 @@ function scrollToSection(id) {
                   </a>
 
                   <a
-                    href="https://t.me/SLCLUB33"
+                    href="https://t.me/+85516777571"
                     target="_blank"
                     rel="noopener noreferrer"
                     class="h-10 px-5 rounded-full bg-[#229ED9]/20 hover:bg-[#229ED9]/35 text-[#229ED9] border border-[#229ED9]/40 transition-all flex items-center gap-2 font-label-sm text-xs sm:text-sm font-bold shadow-md cursor-pointer"
                   >
                     <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.121l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.458c.538-.196 1.006.128.832.943z"/></svg>
-                    <span>Telegram Channel: @SLCLUB33</span>
+                    <span>Telegram: +855 16 777 571</span>
+                  </a>
+
+                  <a
+                    href="tel:+85516777571"
+                    class="h-10 px-5 rounded-full bg-primary/20 hover:bg-primary/30 text-primary border border-primary/40 transition-all flex items-center gap-2 font-label-sm text-xs sm:text-sm font-bold shadow-md cursor-pointer"
+                  >
+                    <span class="material-symbols-outlined text-[18px]">call</span>
+                    <span>ទូរស័ព្ទ៖ 016 777 571</span>
                   </a>
                 </div>
               </div>
@@ -954,20 +962,21 @@ function scrollToSection(id) {
 
         <div class="flex items-center gap-2 shrink-0">
           <a
-            aria-label="Telegram Channel @SLCLUB33"
-            title="Telegram Channel @SLCLUB33"
+            aria-label="Telegram: +855 16 777 571"
+            title="Telegram: +855 16 777 571"
             target="_blank"
             rel="noopener noreferrer"
             class="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-[#229ED9]/20 hover:bg-[#229ED9]/35 text-[#229ED9] flex items-center justify-center transition-colors shadow-md border border-[#229ED9]/40"
-            href="https://t.me/SLCLUB33"
+            href="https://t.me/+85516777571"
           >
             <svg class="w-4 h-4 sm:w-5 sm:h-5 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.121l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.458c.538-.196 1.006.128.832.943z"/></svg>
           </a>
 
           <a
-            aria-label="ទូរស័ព្ទទៅកាន់សេវាបម្រើអតិថិជន VIP"
+            aria-label="ទូរស័ព្ទ៖ 016 777 571"
+            title="ទូរស័ព្ទ៖ 016 777 571"
             class="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-[#1c1c1c] hover:bg-[#252525] text-primary flex items-center justify-center transition-colors shadow-md border border-primary/30"
-            href="tel:+18005557528"
+            href="tel:+85516777571"
           >
             <span class="material-symbols-outlined text-[20px]">phone_in_talk</span>
           </a>
@@ -1040,13 +1049,13 @@ function scrollToSection(id) {
 
             <div class="pt-1">
               <a
-                href="https://t.me/SLCLUB33"
+                href="https://t.me/+85516777571"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="w-full py-2.5 px-3 rounded-lg bg-[#229ED9]/15 hover:bg-[#229ED9]/25 text-[#229ED9] border border-[#229ED9]/30 text-xs font-semibold flex items-center justify-center gap-2 transition"
               >
                 <svg class="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.121l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.458c.538-.196 1.006.128.832.943z"/></svg>
-                <span>ទាក់ទង / តាមដាន Telegram: @SLCLUB33</span>
+                <span>ទាក់ទង Telegram: +855 16 777 571</span>
               </a>
             </div>
           </div>
