@@ -106,8 +106,10 @@ function checkDateGate() {
   }
 }
 
-// Current active view
-const showOfficial = computed(() => isNov9OrLater.value || (isAdmin.value && previewOfficial.value))
+// Current active view: Do NOT auto-unlock official view for guests.
+// Guests always stay on TeaserView (Invitation & Countdown / Event Started).
+// Only Admin can manually preview the official view if explicitly toggled.
+const showOfficial = computed(() => isAdmin.value && previewOfficial.value)
 
 let dateCheckInterval = null
 

@@ -19,6 +19,8 @@ const hours = ref(0)
 const minutes = ref(0)
 const seconds = ref(0)
 const isExpired = ref(false)
+const testEventStarted = ref(false)
+const eventStarted = computed(() => isExpired.value || testEventStarted.value)
 let timerId = null
 
 function updateCountdown() {
@@ -104,6 +106,11 @@ function checkRoleAndParams() {
     const saved = localStorage.getItem('sl_club_invited_guests')
     if (saved) {
       invitedGuests.value = JSON.parse(saved)
+    }
+
+    // 4. Check if testing event started
+    if (params.get('started') === 'true' || params.get('started') === '1') {
+      testEventStarted.value = true
     }
   } catch (err) {
     console.warn("Could not check role or read URL params:", err)
@@ -436,7 +443,12 @@ onUnmounted(() => {
         </div>
         <div class="flex flex-col">
           <span class="text-xs sm:text-sm font-black tracking-widest text-slate-100 uppercase font-sans">SL CLUB</span>
-          <span class="text-[10px] text-amber-400 tracking-wider">COMING SOON</span>
+          <div class="flex items-center gap-1.5">
+            <span :class="eventStarted ? 'text-emerald-400 font-bold' : 'text-amber-400'" class="text-[10px] tracking-wider">
+              {{ eventStarted ? 'កម្មវិធីបានចាប់ផ្តើមហើយ' : 'COMING SOON' }}
+            </span>
+            <span v-if="eventStarted" class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+          </div>
         </div>
       </div>
 
@@ -479,6 +491,18 @@ onUnmounted(() => {
           >
             <span class="material-symbols-outlined text-sm">visibility</span>
             <span class="hidden md:inline">ទំព័រផ្លូវការ (ក្រោយ Countdown)</span>
+          </button>
+
+          <!-- Toggle Test Event Started Button -->
+          <button
+            @click="testEventStarted = !testEventStarted"
+            type="button"
+            class="flex items-center gap-1 px-3 py-1.5 rounded-full border text-xs font-semibold backdrop-blur-md transition-all cursor-pointer"
+            :class="testEventStarted ? 'bg-emerald-500/25 border-emerald-400 text-emerald-300' : 'bg-white/10 hover:bg-white/20 border-white/20 text-white'"
+            :title="testEventStarted ? 'ចុចដើម្បីបិទការតេស្ត' : 'តេស្តមើលពេលកម្មវិធីបានចាប់ផ្តើម'"
+          >
+            <span class="material-symbols-outlined text-sm">{{ testEventStarted ? 'check_circle' : 'toggle_off' }}</span>
+            <span class="hidden md:inline">{{ testEventStarted ? 'កំពុងតេស្ត៖ កម្មវិធីចាប់ផ្តើម' : 'តេស្តពេលចាប់ផ្តើម' }}</span>
           </button>
 
           <!-- Exit Admin Button -->
@@ -680,110 +704,169 @@ onUnmounted(() => {
 
           <!-- Section 2 Header Text -->
           <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-400/10 border border-amber-400/30 text-amber-300 text-xs sm:text-sm font-semibold mb-6 shadow-[0_0_20px_rgba(251,191,36,0.2)]">
-            <span class="material-symbols-outlined text-base">schedule</span>
-            <span>រាប់ថយក្រោយឆ្ពោះទៅកាន់រាត្រីបើកសម្ពោធ</span>
+            <span class="material-symbols-outlined text-base">{{ eventStarted ? 'celebration' : 'schedule' }}</span>
+            <span>{{ eventStarted ? 'រាត្រីបើកសម្ពោធជាផ្លូវការកំពុងប្រព្រឹត្តទៅ' : 'រាប់ថយក្រោយឆ្ពោះទៅកាន់រាត្រីបើកសម្ពោធ' }}</span>
           </div>
 
           <h2 class="text-2xl sm:text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-white to-amber-200 tracking-wide font-['Kantumruy_Pro','Battambang',sans-serif] filter drop-shadow-[0_0_25px_rgba(255,255,255,0.4)] leading-tight px-2">
-            ពួកយើងនឹងមកដល់ឆាប់ៗនេះ ជាមួយនឹង SL CLUB
+            {{ eventStarted ? 'សូមស្វាគមន៍មកកាន់ SL CLUB BATTAMBANG' : 'ពួកយើងនឹងមកដល់ឆាប់ៗនេះ ជាមួយនឹង SL CLUB' }}
           </h2>
 
           <p class="mt-3 text-sm sm:text-base text-slate-300 font-sans tracking-widest uppercase max-w-lg">
-            WE ARE COMING SOON WITH SL CLUB BATTAMBANG
+            {{ eventStarted ? 'GRAND OPENING NIGHT • SL CLUB BATTAMBANG' : 'WE ARE COMING SOON WITH SL CLUB BATTAMBANG' }}
           </p>
 
-          <!-- ================= GIANT DAYS DISPLAY (ចំនួនថ្ងៃដែលនៅសល់) ================= -->
-          <div class="mt-8 sm:mt-12 relative flex flex-col items-center justify-center w-full max-w-lg">
-            <div class="absolute inset-0 bg-radial-[circle_at_50%_50%] from-amber-400/25 via-amber-500/10 to-transparent blur-3xl rounded-full scale-125"></div>
+          <!-- ================= 1. IF EVENT HAS STARTED: SHOW "កម្មវិធីបានចាប់ផ្តើមហើយ" ================= -->
+          <div v-if="eventStarted" class="mt-8 sm:mt-12 relative flex flex-col items-center justify-center w-full max-w-2xl px-2">
+            <!-- Pulsing Celebration Aura -->
+            <div class="absolute inset-0 bg-radial-[circle_at_50%_50%] from-amber-400/35 via-amber-500/15 to-transparent blur-3xl rounded-full scale-125 animate-pulse"></div>
 
-            <div class="relative w-full flex flex-col items-center p-6 sm:p-10 rounded-3xl bg-black/70 backdrop-blur-xl border border-amber-400/50 shadow-[0_0_50px_rgba(251,191,36,0.35),inset_0_0_30px_rgba(255,255,255,0.08)]">
-              <div class="flex items-baseline justify-center">
-                <span class="text-8xl sm:text-[10rem] md:text-[12rem] font-black text-transparent bg-clip-text bg-gradient-to-b from-white via-amber-200 to-amber-500 font-mono tracking-tighter filter drop-shadow-[0_0_40px_rgba(251,191,36,0.7)] leading-none select-none">
-                  {{ formattedDays }}
-                </span>
+            <div class="relative w-full flex flex-col items-center p-8 sm:p-12 rounded-3xl bg-gradient-to-b from-black/90 via-[#15130f] to-black/95 backdrop-blur-2xl border-2 border-amber-400/60 shadow-[0_0_60px_rgba(251,191,36,0.45),inset_0_0_40px_rgba(255,255,255,0.1)] text-center">
+              
+              <!-- Live Indicator -->
+              <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/20 border border-emerald-400/60 text-emerald-300 text-xs sm:text-sm font-bold tracking-widest uppercase shadow-[0_0_20px_rgba(16,185,129,0.3)] mb-5">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+                <span>កំពុងដំណើរការ • HAPPENING NOW</span>
               </div>
 
-              <div class="mt-3 sm:mt-5 flex items-center gap-3">
-                <div class="h-px w-8 sm:w-16 bg-gradient-to-r from-transparent via-amber-400 to-transparent"></div>
-                <div class="flex flex-col items-center">
-                  <span class="text-xl sm:text-2xl md:text-3xl font-extrabold text-amber-300 tracking-wider font-['Kantumruy_Pro',sans-serif]">
-                    {{ khmerDays }} ថ្ងៃ (ចំនួនថ្ងៃដែលនៅសល់)
-                  </span>
-                  <span class="text-xs sm:text-sm font-bold tracking-[0.3em] text-slate-300 uppercase font-sans mt-0.5">
-                    DAYS REMAINING
+              <!-- Main Heading: "កម្មវិធីបានចាប់ផ្តើមហើយ" -->
+              <h3 class="text-3xl sm:text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-white to-amber-300 font-['Kantumruy_Pro','Battambang',sans-serif] tracking-wide leading-tight filter drop-shadow-[0_0_30px_rgba(251,191,36,0.8)]">
+                កម្មវិធីបានចាប់ផ្តើមហើយ
+              </h3>
+
+              <p class="mt-2 text-xs sm:text-sm font-bold tracking-[0.35em] text-amber-300/90 uppercase font-sans">
+                THE EVENT HAS OFFICIALLY STARTED!
+              </p>
+
+              <!-- Golden Decorative Line -->
+              <div class="my-6 flex items-center justify-center gap-3 w-full max-w-md">
+                <div class="h-px flex-1 bg-gradient-to-r from-transparent via-amber-400 to-transparent"></div>
+                <span class="material-symbols-outlined text-amber-400 text-xl">celebration</span>
+                <div class="h-px flex-1 bg-gradient-to-r from-transparent via-amber-400 to-transparent"></div>
+              </div>
+
+              <!-- Welcome Paragraph -->
+              <p class="text-sm sm:text-base md:text-lg text-slate-200 font-['Kantumruy_Pro',sans-serif] max-w-lg leading-relaxed">
+                រាត្រីបើកសម្ពោធជាផ្លូវការ <strong class="text-amber-300 font-bold">SL CLUB BATTAMBANG</strong> កំពុងប្រព្រឹត្តទៅយ៉ាងមហោឡារិក! សូមស្វាគមន៍វត្តមានដ៏ឧត្តុង្គឧត្តមរបស់លោកអ្នក!
+              </p>
+
+              <!-- Action Buttons -->
+              <div class="mt-8 flex flex-wrap items-center justify-center gap-3 w-full">
+                <button
+                  @click="openMaps"
+                  type="button"
+                  class="flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-slate-800 to-slate-900 hover:from-slate-700 hover:to-slate-800 border border-white/20 text-white font-semibold text-xs sm:text-sm shadow-lg hover:scale-105 active:scale-95 transition-all cursor-pointer"
+                >
+                  <span class="material-symbols-outlined text-red-400 text-base">location_on</span>
+                  <span>មើលទីតាំងលើ Google Maps</span>
+                </button>
+                <a
+                  href="tel:+85516777571"
+                  class="flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-bold text-xs sm:text-sm shadow-lg shadow-amber-500/30 hover:scale-105 active:scale-95 transition-all"
+                >
+                  <span class="material-symbols-outlined text-base">call</span>
+                  <span>ទំនាក់ទំនង៖ 016 777 571</span>
+                </a>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- ================= 2. ACTIVE COUNTDOWN: BEFORE EVENT STARTS ================= -->
+          <template v-else>
+            <!-- GIANT DAYS DISPLAY (ចំនួនថ្ងៃដែលនៅសល់) -->
+            <div class="mt-8 sm:mt-12 relative flex flex-col items-center justify-center w-full max-w-lg">
+              <div class="absolute inset-0 bg-radial-[circle_at_50%_50%] from-amber-400/25 via-amber-500/10 to-transparent blur-3xl rounded-full scale-125"></div>
+
+              <div class="relative w-full flex flex-col items-center p-6 sm:p-10 rounded-3xl bg-black/70 backdrop-blur-xl border border-amber-400/50 shadow-[0_0_50px_rgba(251,191,36,0.35),inset_0_0_30px_rgba(255,255,255,0.08)]">
+                <div class="flex items-baseline justify-center">
+                  <span class="text-8xl sm:text-[10rem] md:text-[12rem] font-black text-transparent bg-clip-text bg-gradient-to-b from-white via-amber-200 to-amber-500 font-mono tracking-tighter filter drop-shadow-[0_0_40px_rgba(251,191,36,0.7)] leading-none select-none">
+                    {{ formattedDays }}
                   </span>
                 </div>
-                <div class="h-px w-8 sm:w-16 bg-gradient-to-r from-transparent via-amber-400 to-transparent"></div>
+
+                <div class="mt-3 sm:mt-5 flex items-center gap-3">
+                  <div class="h-px w-8 sm:w-16 bg-gradient-to-r from-transparent via-amber-400 to-transparent"></div>
+                  <div class="flex flex-col items-center">
+                    <span class="text-xl sm:text-2xl md:text-3xl font-extrabold text-amber-300 tracking-wider font-['Kantumruy_Pro',sans-serif]">
+                      {{ khmerDays }} ថ្ងៃ (ចំនួនថ្ងៃដែលនៅសល់)
+                    </span>
+                    <span class="text-xs sm:text-sm font-bold tracking-[0.3em] text-slate-300 uppercase font-sans mt-0.5">
+                      DAYS REMAINING
+                    </span>
+                  </div>
+                  <div class="h-px w-8 sm:w-16 bg-gradient-to-r from-transparent via-amber-400 to-transparent"></div>
+                </div>
               </div>
             </div>
-          </div>
 
-          <!-- ================= SUB-TIMER: ថ្ងៃ, ម៉ោង, នាទី និង វិនាទី ================= -->
-          <div class="mt-8 sm:mt-10 w-full max-w-2xl px-2">
-            <p class="text-xs sm:text-sm font-semibold text-slate-300 mb-3 sm:mb-4 flex items-center justify-center gap-1.5">
-              <span class="material-symbols-outlined text-base text-amber-400">timer</span>
-              <span>ពេលវេលាជាក់លាក់ដែលរាប់ថយក្រោយ</span>
-            </p>
+            <!-- SUB-TIMER: ថ្ងៃ, ម៉ោង, នាទី និង វិនាទី -->
+            <div class="mt-8 sm:mt-10 w-full max-w-2xl px-2">
+              <p class="text-xs sm:text-sm font-semibold text-slate-300 mb-3 sm:mb-4 flex items-center justify-center gap-1.5">
+                <span class="material-symbols-outlined text-base text-amber-400">timer</span>
+                <span>ពេលវេលាជាក់លាក់ដែលរាប់ថយក្រោយ</span>
+              </p>
 
-            <div class="grid grid-cols-4 gap-2 sm:gap-4 md:gap-5">
-              <!-- 1. ថ្ងៃ (DAYS) -->
-              <div class="relative flex flex-col items-center p-2.5 sm:p-4 md:p-5 rounded-xl sm:rounded-2xl bg-white/5 backdrop-blur-md border border-amber-400/40 shadow-[0_4px_20px_rgba(0,0,0,0.6)] group hover:border-amber-400/80 transition-all hover:scale-105">
-                <span class="text-2xl sm:text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-amber-300 font-mono tracking-tight leading-none">
-                  {{ formattedDays }}
-                </span>
-                <span class="mt-1 sm:mt-2 text-[10px] sm:text-xs md:text-sm font-bold text-amber-300 whitespace-nowrap font-['Kantumruy_Pro',sans-serif]">
-                  {{ khmerDays }} ថ្ងៃ
-                </span>
-                <span class="text-[8px] sm:text-[10px] tracking-wider text-slate-400 uppercase font-sans mt-0.5">
-                  DAYS
-                </span>
-              </div>
+              <div class="grid grid-cols-4 gap-2 sm:gap-4 md:gap-5">
+                <!-- 1. ថ្ងៃ (DAYS) -->
+                <div class="relative flex flex-col items-center p-2.5 sm:p-4 md:p-5 rounded-xl sm:rounded-2xl bg-white/5 backdrop-blur-md border border-amber-400/40 shadow-[0_4px_20px_rgba(0,0,0,0.6)] group hover:border-amber-400/80 transition-all hover:scale-105">
+                  <span class="text-2xl sm:text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-amber-300 font-mono tracking-tight leading-none">
+                    {{ formattedDays }}
+                  </span>
+                  <span class="mt-1 sm:mt-2 text-[10px] sm:text-xs md:text-sm font-bold text-amber-300 whitespace-nowrap font-['Kantumruy_Pro',sans-serif]">
+                    {{ khmerDays }} ថ្ងៃ
+                  </span>
+                  <span class="text-[8px] sm:text-[10px] tracking-wider text-slate-400 uppercase font-sans mt-0.5">
+                    DAYS
+                  </span>
+                </div>
 
-              <!-- 2. ម៉ោង (HOURS) -->
-              <div class="relative flex flex-col items-center p-2.5 sm:p-4 md:p-5 rounded-xl sm:rounded-2xl bg-white/5 backdrop-blur-md border border-white/15 shadow-[0_4px_20px_rgba(0,0,0,0.6)] group hover:border-amber-400/50 transition-all hover:scale-105">
-                <span class="text-2xl sm:text-4xl md:text-5xl font-black text-white font-mono tracking-tight leading-none group-hover:text-amber-300 transition-colors">
-                  {{ formattedHours }}
-                </span>
-                <span class="mt-1 sm:mt-2 text-[10px] sm:text-xs md:text-sm font-bold text-amber-400 whitespace-nowrap font-['Kantumruy_Pro',sans-serif]">
-                  {{ khmerHours }} ម៉ោង
-                </span>
-                <span class="text-[8px] sm:text-[10px] tracking-wider text-slate-400 uppercase font-sans mt-0.5">
-                  HOURS
-                </span>
-              </div>
+                <!-- 2. ម៉ោង (HOURS) -->
+                <div class="relative flex flex-col items-center p-2.5 sm:p-4 md:p-5 rounded-xl sm:rounded-2xl bg-white/5 backdrop-blur-md border border-white/15 shadow-[0_4px_20px_rgba(0,0,0,0.6)] group hover:border-amber-400/50 transition-all hover:scale-105">
+                  <span class="text-2xl sm:text-4xl md:text-5xl font-black text-white font-mono tracking-tight leading-none group-hover:text-amber-300 transition-colors">
+                    {{ formattedHours }}
+                  </span>
+                  <span class="mt-1 sm:mt-2 text-[10px] sm:text-xs md:text-sm font-bold text-amber-400 whitespace-nowrap font-['Kantumruy_Pro',sans-serif]">
+                    {{ khmerHours }} ម៉ោង
+                  </span>
+                  <span class="text-[8px] sm:text-[10px] tracking-wider text-slate-400 uppercase font-sans mt-0.5">
+                    HOURS
+                  </span>
+                </div>
 
-              <!-- 3. នាទី (MINUTES) -->
-              <div class="relative flex flex-col items-center p-2.5 sm:p-4 md:p-5 rounded-xl sm:rounded-2xl bg-white/5 backdrop-blur-md border border-white/15 shadow-[0_4px_20px_rgba(0,0,0,0.6)] group hover:border-amber-400/50 transition-all hover:scale-105">
-                <span class="text-2xl sm:text-4xl md:text-5xl font-black text-white font-mono tracking-tight leading-none group-hover:text-amber-300 transition-colors">
-                  {{ formattedMinutes }}
-                </span>
-                <span class="mt-1 sm:mt-2 text-[10px] sm:text-xs md:text-sm font-bold text-amber-400 whitespace-nowrap font-['Kantumruy_Pro',sans-serif]">
-                  {{ khmerMinutes }} នាទី
-                </span>
-                <span class="text-[8px] sm:text-[10px] tracking-wider text-slate-400 uppercase font-sans mt-0.5">
-                  MINUTES
-                </span>
-              </div>
+                <!-- 3. នាទី (MINUTES) -->
+                <div class="relative flex flex-col items-center p-2.5 sm:p-4 md:p-5 rounded-xl sm:rounded-2xl bg-white/5 backdrop-blur-md border border-white/15 shadow-[0_4px_20px_rgba(0,0,0,0.6)] group hover:border-amber-400/50 transition-all hover:scale-105">
+                  <span class="text-2xl sm:text-4xl md:text-5xl font-black text-white font-mono tracking-tight leading-none group-hover:text-amber-300 transition-colors">
+                    {{ formattedMinutes }}
+                  </span>
+                  <span class="mt-1 sm:mt-2 text-[10px] sm:text-xs md:text-sm font-bold text-amber-400 whitespace-nowrap font-['Kantumruy_Pro',sans-serif]">
+                    {{ khmerMinutes }} នាទី
+                  </span>
+                  <span class="text-[8px] sm:text-[10px] tracking-wider text-slate-400 uppercase font-sans mt-0.5">
+                    MINUTES
+                  </span>
+                </div>
 
-              <!-- 4. វិនាទី (SECONDS) -->
-              <div class="relative flex flex-col items-center p-2.5 sm:p-4 md:p-5 rounded-xl sm:rounded-2xl bg-white/5 backdrop-blur-md border border-white/15 shadow-[0_4px_20px_rgba(0,0,0,0.6)] group hover:border-amber-400/50 transition-all hover:scale-105">
-                <span class="text-2xl sm:text-4xl md:text-5xl font-black text-amber-400 font-mono tracking-tight leading-none animate-pulse">
-                  {{ formattedSeconds }}
-                </span>
-                <span class="mt-1 sm:mt-2 text-[10px] sm:text-xs md:text-sm font-bold text-amber-400 whitespace-nowrap font-['Kantumruy_Pro',sans-serif]">
-                  {{ khmerSeconds }} វិនាទី
-                </span>
-                <span class="text-[8px] sm:text-[10px] tracking-wider text-slate-400 uppercase font-sans mt-0.5">
-                  SECONDS
-                </span>
+                <!-- 4. វិនាទី (SECONDS) -->
+                <div class="relative flex flex-col items-center p-2.5 sm:p-4 md:p-5 rounded-xl sm:rounded-2xl bg-white/5 backdrop-blur-md border border-white/15 shadow-[0_4px_20px_rgba(0,0,0,0.6)] group hover:border-amber-400/50 transition-all hover:scale-105">
+                  <span class="text-2xl sm:text-4xl md:text-5xl font-black text-amber-400 font-mono tracking-tight leading-none animate-pulse">
+                    {{ formattedSeconds }}
+                  </span>
+                  <span class="mt-1 sm:mt-2 text-[10px] sm:text-xs md:text-sm font-bold text-amber-400 whitespace-nowrap font-['Kantumruy_Pro',sans-serif]">
+                    {{ khmerSeconds }} វិនាទី
+                  </span>
+                  <span class="text-[8px] sm:text-[10px] tracking-wider text-slate-400 uppercase font-sans mt-0.5">
+                    SECONDS
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
+          </template>
 
           <!-- Target Date Indicator -->
           <div class="mt-6 sm:mt-8 px-5 py-2.5 rounded-full bg-black/60 border border-white/10 text-xs sm:text-sm text-slate-300 flex items-center gap-2">
-            <span class="material-symbols-outlined text-amber-400 text-base">event</span>
-            <span>រាត្រីបើកសម្ពោធ៖ ថ្ងៃចន្ទ ទី ០៩ ខែ វិច្ឆិកា ឆ្នាំ ២០២៦ វេលាម៉ោង ៧:០០ យប់</span>
+            <span class="material-symbols-outlined text-amber-400 text-base">{{ eventStarted ? 'celebration' : 'event' }}</span>
+            <span>រាត្រីបើកសម្ពោធ៖ ថ្ងៃចន្ទ ទី ០៩ ខែ វិច្ឆិកា ឆ្នាំ ២០២៦ វេលាម៉ោង ៧:០០ យប់ <strong v-if="eventStarted" class="text-emerald-400">(កំពុងប្រព្រឹត្តទៅ)</strong></span>
           </div>
 
           <!-- Prompt Button to Scroll down to Gallery Section -->
