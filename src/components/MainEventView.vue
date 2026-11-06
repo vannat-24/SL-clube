@@ -271,9 +271,9 @@ function scrollToSection(id) {
           <div class="w-28 h-28 sm:w-36 sm:h-36 md:w-40 md:h-40 rounded-full p-1 bg-gradient-to-b from-secondary-fixed via-primary to-primary-container shadow-[0_0_50px_rgba(242,202,80,0.6)]">
             <div class="w-full h-full rounded-full bg-black/95 p-3 flex items-center justify-center overflow-hidden border border-primary/40">
               <img
-                src="/logo.jpg"
-                alt="SL Club Golden Monogram"
-                class="w-full h-full object-contain filter drop-shadow-[0_0_15px_rgba(242,202,80,0.8)]"
+                src="/logo-official.png"
+                alt="SL Club Logo"
+                class="w-full h-full object-contain filter drop-shadow-[0_0_15px_rgba(255,255,255,0.8)]"
               />
             </div>
           </div>
@@ -318,7 +318,7 @@ function scrollToSection(id) {
           <img
             alt="SL Club Logo"
             class="h-9 w-9 sm:h-11 sm:w-11 rounded-lg sm:rounded-xl object-contain bg-black/90 p-0.5 border border-primary/40 shadow-[0_0_14px_rgba(242,202,80,0.4)] shrink-0"
-            src="/logo.jpg"
+            src="/logo-official.png"
           />
           <div class="flex flex-col min-w-0">
             <div class="flex items-center gap-1.5 sm:gap-2">
@@ -400,7 +400,7 @@ function scrollToSection(id) {
         <div class="w-full max-w-sm rounded-2xl bg-[#121212]/95 backdrop-blur-2xl border border-primary/40 shadow-[0_20px_60px_rgba(0,0,0,0.95)] p-5 space-y-4">
           <div class="flex items-center justify-between pb-3 border-b border-outline-variant/30">
             <div class="flex items-center gap-2">
-              <img src="/logo.jpg" alt="SL Club" class="w-7 h-7 rounded-lg object-contain border border-primary/30" />
+              <img src="/logo-official.png" alt="SL Club" class="w-7 h-7 rounded-lg object-contain border border-primary/30 bg-black" />
               <div>
                 <h4 class="font-headline-sm text-sm sm:text-base font-bold text-primary leading-tight">SL CLUB VIP MENU</h4>
                 <p class="text-[10px] text-slate-400">មឺនុយសេវាកម្ម និងព័ត៌មាន</p>
@@ -575,7 +575,7 @@ function scrollToSection(id) {
                 <!-- Top Row: Official Gala Badges -->
                 <div class="relative z-10 flex items-center justify-between gap-2">
                   <div class="px-3 py-1.5 rounded-xl bg-black/85 backdrop-blur-md flex items-center gap-2 border border-primary/40 shadow-lg">
-                    <img src="/logo.jpg" alt="SL Club Logo" class="w-6 h-6 rounded object-contain" />
+                    <img src="/logo-official.png" alt="SL Club Logo" class="w-6 h-6 rounded object-contain" />
                     <span class="font-label-sm text-xs sm:text-sm text-primary-fixed uppercase tracking-wider font-semibold drop-shadow">
                       រាត្រីសម្ពោធផ្លូវការ
                     </span>
@@ -591,7 +591,7 @@ function scrollToSection(id) {
                 <div class="relative z-10 my-auto flex flex-col items-center text-center py-4">
                   <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl p-1 bg-gradient-to-b from-secondary-fixed via-primary to-primary-container shadow-[0_0_35px_rgba(242,202,80,0.6)] group-hover:scale-110 transition-transform duration-500">
                     <div class="w-full h-full rounded-xl bg-black/95 p-2 flex items-center justify-center overflow-hidden border border-primary/40">
-                      <img src="/logo.jpg" alt="SL Club Emblem" class="w-full h-full object-contain filter drop-shadow-[0_0_10px_rgba(242,202,80,0.7)]" />
+                      <img src="/logo-official.png" alt="SL Club Emblem" class="w-full h-full object-contain filter drop-shadow-[0_0_10px_rgba(255,255,255,0.7)]" />
                     </div>
                   </div>
                   <h3 class="font-headline-sm text-lg sm:text-xl font-extrabold text-primary tracking-wider mt-3 drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)]">
@@ -1108,7 +1108,7 @@ function scrollToSection(id) {
         <div class="bg-[#141414]/95 backdrop-blur-2xl p-6 sm:p-8 rounded-2xl shadow-[0_25px_70px_rgba(0,0,0,0.95)] flex flex-col gap-4 text-on-surface border border-primary/40 w-full max-w-md">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-3">
-              <img src="/logo.jpg" alt="SL Club Logo" class="w-8 h-8 rounded-lg object-contain border border-primary/40 bg-black/80 shadow-md" />
+              <img src="/logo-official.png" alt="SL Club Logo" class="w-8 h-8 rounded-lg object-contain border border-primary/40 bg-black/80 shadow-md" />
               <span class="font-headline-sm text-lg sm:text-xl font-bold text-slate-100">ការចុះឈ្មោះ VIP</span>
             </div>
             <button

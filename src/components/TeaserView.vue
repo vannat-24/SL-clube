@@ -432,7 +432,7 @@ onUnmounted(() => {
       <!-- Brand Crest -->
       <div class="flex items-center gap-2.5 sm:gap-3">
         <div class="relative w-9 h-9 sm:w-10 sm:h-10 rounded-lg p-0.5 bg-gradient-to-b from-slate-200 via-slate-400 to-slate-700 shadow-[0_0_15px_rgba(255,255,255,0.3)]">
-          <img src="/logo.jpg" alt="SL Club" class="w-full h-full object-contain rounded-md" />
+          <img src="/logo-official.png" alt="SL Club" class="w-full h-full object-contain rounded-md bg-black" />
         </div>
         <div class="flex flex-col">
           <span class="text-xs sm:text-sm font-black tracking-widest text-slate-100 uppercase font-sans">SL CLUB</span>
@@ -553,36 +553,21 @@ onUnmounted(() => {
 
           <!-- Top Section: Glowing Logo & Monogram -->
           <div class="relative z-10 flex flex-col items-center text-center pt-2 sm:pt-4">
-            <!-- Large Chrome Glowing Monogram ($L) -->
-            <div class="relative group cursor-pointer" @click="scrollToCountdown">
-              <div class="absolute -inset-4 bg-gradient-to-r from-white/20 via-slate-200/40 to-white/20 blur-xl opacity-70 group-hover:opacity-100 transition-opacity"></div>
-              
-              <!-- SL Icon / Emblem -->
-              <div class="relative flex flex-col items-center">
-                <svg class="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 filter drop-shadow-[0_0_20px_rgba(255,255,255,0.85)] drop-shadow-[0_0_35px_rgba(255,255,255,0.4)]" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <defs>
-                    <linearGradient id="chromeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stop-color="#ffffff"/>
-                      <stop offset="25%" stop-color="#e2e8f0"/>
-                      <stop offset="50%" stop-color="#94a3b8"/>
-                      <stop offset="75%" stop-color="#f8fafc"/>
-                      <stop offset="100%" stop-color="#cbd5e1"/>
-                    </linearGradient>
-                  </defs>
-                  <path d="M50 8 V20 M50 80 V92" stroke="url(#chromeGrad)" stroke-width="4.5" stroke-linecap="round"/>
-                  <path d="M66 32 C66 22 58 16 50 16 C40 16 34 22 34 30 C34 42 66 42 66 58 C66 68 58 74 50 74 C40 74 34 68 34 56" stroke="url(#chromeGrad)" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M42 24 V68 H62" stroke="url(#chromeGrad)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
-                </svg>
+            <!-- Official SL CLUB Logo with Chrome Luxury Glow -->
+            <div class="relative group cursor-pointer flex flex-col items-center" @click="scrollToCountdown">
+              <!-- Ambient Backlight Glow -->
+              <div class="absolute -inset-4 bg-gradient-to-r from-white/20 via-slate-200/35 to-white/20 blur-2xl opacity-75 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500 pointer-events-none"></div>
 
-                <!-- CLUB Chrome Text -->
-                <h1 class="mt-1 text-2xl sm:text-3xl md:text-4xl font-black tracking-[0.25em] text-white font-sans uppercase filter drop-shadow-[0_0_15px_rgba(255,255,255,0.8)]">
-                  CLUB
-                </h1>
-              </div>
+              <!-- Official Logo Image from Client -->
+              <img
+                src="/logo-official.png"
+                alt="SL CLUB"
+                class="relative w-36 sm:w-44 md:w-52 max-w-[210px] h-auto object-contain filter drop-shadow-[0_0_20px_rgba(255,255,255,0.9)] drop-shadow-[0_0_40px_rgba(255,255,255,0.4)] group-hover:scale-105 transition-all duration-500 ease-out"
+              />
             </div>
 
             <!-- Invitation Title Khmer & English -->
-            <div class="mt-4 sm:mt-6 flex flex-col items-center">
+            <div class="mt-3 sm:mt-5 flex flex-col items-center">
               <h2 class="text-xl sm:text-2xl md:text-3xl font-bold tracking-wide text-slate-100 font-['Kantumruy_Pro','Battambang',sans-serif] filter drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]">
                 សំបុត្រគោរពអញ្ជើញ
               </h2>
@@ -647,7 +632,7 @@ onUnmounted(() => {
             <!-- Location Details (Matches Mockup exact text) -->
             <div class="flex items-start gap-2.5 max-w-[85%] cursor-pointer hover:opacity-90 transition-opacity" @click="openMaps">
               <div class="w-7 h-7 sm:w-8 sm:h-8 rounded bg-black/80 p-0.5 border border-white/30 shrink-0 shadow-md">
-                <img src="/logo.jpg" alt="SL" class="w-full h-full object-contain" />
+                <img src="/logo-official.png" alt="SL" class="w-full h-full object-contain" />
               </div>
 
               <div class="flex flex-col text-left">
@@ -1543,7 +1528,7 @@ onUnmounted(() => {
         <!-- Top Controls Bar -->
         <div class="w-full max-w-5xl flex items-center justify-between z-20 pt-1 pb-3 px-2 border-b border-white/10">
           <div class="flex items-center gap-2 sm:gap-3">
-            <img src="/logo.jpg" alt="SL Club" class="w-8 h-8 rounded-lg object-contain border border-amber-400/40" />
+            <img src="/logo-official.png" alt="SL Club" class="w-8 h-8 rounded-lg object-contain border border-amber-400/40 bg-black" />
             <div class="flex flex-col">
               <span class="text-xs sm:text-sm font-bold text-white tracking-widest uppercase font-sans">SL CLUB</span>
               <span class="text-[10px] text-amber-400 tracking-wider">3D INTERIOR GALLERY</span>
