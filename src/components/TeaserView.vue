@@ -136,7 +136,16 @@ function checkRoleAndParams() {
   try {
     const params = new URLSearchParams(window.location.search)
 
-    // 1. Check if user is in Admin role
+    // 1. Check Guest Name for VIP invitation
+    const nameParam = params.get('to') || params.get('name') || params.get('guest')
+    if (nameParam && nameParam.trim()) {
+      guestName.value = nameParam.trim()
+      document.title = `SL CLUB - សំបុត្រគោរពអញ្ជើញ ${guestName.value}`
+      isAdmin.value = false // Strictly Guest: Never show admin controls
+      return // Do not process admin session for guest invitation links
+    }
+
+    // 2. Check if user is in Admin role (only for non-guest links)
     const roleParam = params.get('role') || params.get('admin')
     if (roleParam === 'admin' || roleParam === 'true' || roleParam === '1') {
       isAdmin.value = true
@@ -145,13 +154,6 @@ function checkRoleAndParams() {
       isAdmin.value = true
     } else {
       isAdmin.value = false
-    }
-
-    // 2. Check Guest Name for VIP invitation
-    const nameParam = params.get('to') || params.get('name') || params.get('guest')
-    if (nameParam && nameParam.trim()) {
-      guestName.value = nameParam.trim()
-      document.title = `SL CLUB - សំបុត្រគោរពអញ្ជើញ ${guestName.value}`
     }
 
     // 3. Load saved guest list for Admin
@@ -190,6 +192,12 @@ function verifyAdminPin() {
 function exitAdmin() {
   isAdmin.value = false
   localStorage.removeItem('sl_club_admin_session')
+  if (typeof window !== 'undefined') {
+    const url = new URL(window.location.href)
+    url.searchParams.delete('role')
+    url.searchParams.delete('admin')
+    window.history.replaceState({}, '', url.pathname + (url.search ? url.search : ''))
+  }
 }
 
 // Admin Guest Link Creation
@@ -512,8 +520,8 @@ onUnmounted(() => {
 
       <!-- Right Header Actions -->
       <div class="flex items-center gap-2 sm:gap-3">
-        <!-- 1. ADMIN MODE CONTROLS (Only visible if Role is Admin) -->
-        <template v-if="isAdmin">
+        <!-- 1. ADMIN MODE CONTROLS (Only visible if Role is Admin AND NOT viewing a Guest link) -->
+        <template v-if="isAdmin && !guestName">
           <!-- Admin Badge (Hidden on mobile phones) -->
           <div class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-400/20 border border-amber-400/50 text-amber-300 text-[11px] font-bold">
             <span class="material-symbols-outlined text-sm">shield_person</span>
@@ -664,8 +672,8 @@ onUnmounted(() => {
           <!-- NOTE: GUEST CANNOT EDIT (Read-Only). ONLY ADMIN CAN CLICK TO EDIT IF IN ADMIN MODE -->
           <div class="relative z-10 w-full my-auto py-3">
             <div
-              :class="isAdmin ? 'cursor-pointer hover:border-amber-400/50' : 'cursor-default'"
-              @click="isAdmin ? openNameModal() : null"
+              :class="isAdmin && !guestName ? 'cursor-pointer hover:border-amber-400/50' : 'cursor-default'"
+              @click="isAdmin && !guestName ? openNameModal() : null"
               class="relative w-full rounded-xl p-4 sm:p-5 bg-white/10 backdrop-blur-md border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.5),inset_0_1px_10px_rgba(255,255,255,0.15)] flex flex-col items-center justify-center text-center overflow-hidden group transition-all"
             >
               <!-- Shimmer light reflection effect -->
@@ -703,7 +711,7 @@ onUnmounted(() => {
               </div>
 
               <!-- Edit Indicator (ONLY SHOWN TO ADMIN, NEVER SHOWN TO GUEST) -->
-              <div v-if="isAdmin" class="mt-2 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-400/20 border border-amber-400/40 text-[10px] text-amber-300">
+              <div v-if="isAdmin && !guestName" class="mt-2 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-400/20 border border-amber-400/40 text-[10px] text-amber-300">
                 <span class="material-symbols-outlined text-xs">edit</span>
                 <span>Admin៖ ចុចដើម្បីកែ</span>
               </div>
@@ -1370,9 +1378,9 @@ onUnmounted(() => {
             <p class="text-[11px] sm:text-xs text-slate-500 font-sans tracking-widest uppercase">
               © 2026 SL CLUB BATTAMBANG. ALL RIGHTS RESERVED.
             </p>
-            <!-- Discreet Admin Login Button at bottom -->
+            <!-- Discreet Admin Login Button at bottom (HIDDEN FOR GUESTS) -->
             <button
-              v-if="!isAdmin"
+              v-if="!isAdmin && !guestName"
               @click="openAdminLogin"
               type="button"
               class="text-[10px] text-slate-600 hover:text-amber-400 transition-colors flex items-center gap-1 cursor-pointer"

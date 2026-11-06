@@ -83,6 +83,16 @@ function replayIntro() {
 function checkDateGate() {
   if (typeof window !== 'undefined') {
     const params = new URLSearchParams(window.location.search)
+
+    // 1. Strict Guest Mode: Anyone opening with a guest link is 100% a guest!
+    const name = params.get('to') || params.get('name') || params.get('guest')
+    if (name && name.trim()) {
+      guestName.value = name.trim()
+      isAdmin.value = false
+      return // Do NOT process admin session for guest invitation links
+    }
+
+    // 2. Admin verification (ONLY for non-guest links)
     const isAdminParam = params.get('role') === 'admin' ||
                          params.get('admin') === 'true' ||
                          params.get('admin') === '1' ||
@@ -90,11 +100,6 @@ function checkDateGate() {
     isAdmin.value = isAdminParam
     if (params.get('role') === 'admin' || params.get('admin') === 'true') {
       showIntroOverlay.value = false // Skip intro directly for admin
-    }
-
-    const name = params.get('to') || params.get('name') || params.get('guest')
-    if (name && name.trim()) {
-      guestName.value = name.trim()
     }
   }
 }
@@ -146,8 +151,9 @@ onUnmounted(() => {
 
           <!-- Top Navigation Bar -->
           <div class="absolute top-4 sm:top-6 inset-x-4 sm:inset-x-6 z-40 flex items-center justify-between pointer-events-none">
-            <!-- Discreet Admin Portal Button -->
+            <!-- Discreet Admin Portal Button (Completely hidden for guest recipients) -->
             <button
+              v-if="!guestName && !isAdmin"
               @click.stop="openAdminLogin"
               type="button"
               class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/60 hover:bg-black/80 backdrop-blur-md border border-white/20 text-slate-300 hover:text-amber-400 text-xs font-medium cursor-pointer pointer-events-auto transition-colors"
@@ -155,6 +161,7 @@ onUnmounted(() => {
               <span class="material-symbols-outlined text-xs text-amber-400">lock</span>
               <span>Admin</span>
             </button>
+            <div v-else class="w-12 pointer-events-none"></div>
 
             <!-- Skip Button -->
             <button
