@@ -687,7 +687,7 @@ function scrollToSection(id) {
                   កាលវិភាគរាត្រីសម្ពោធ
                 </span>
                 <h2 class="font-headline-md text-2xl sm:text-3xl text-slate-100 font-bold mt-1 drop-shadow">
-                  ថ្ងៃសុក្រ ទី ០៩ ខែតុលា ឆ្នាំ ២០២៦
+                  ថ្ងៃចន្ទ ទី ០៩ ខែ វិច្ឆិកា ឆ្នាំ ២០២៦
                 </h2>
                 <span class="font-body-sm text-xs sm:text-sm text-slate-300 mt-0.5">
                   ចាប់បើកទ្វារទទួលភ្ញៀវវេលាម៉ោង ៦:០០ ល្ងាច តទៅ
