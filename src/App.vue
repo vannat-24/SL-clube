@@ -253,7 +253,18 @@ onUnmounted(() => {
       </button>
 
       <button
-        v-if="previewOfficial"
+        v-if="!previewOfficial"
+        @click="previewOfficial = true"
+        type="button"
+        class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 text-black font-bold text-xs shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer"
+        title="តេស្តមើលទំព័រផ្លូវការក្រោយចប់ Countdown"
+      >
+        <span class="material-symbols-outlined text-xs">visibility</span>
+        <span>តេស្តមើលទំព័រផ្លូវការ</span>
+      </button>
+
+      <button
+        v-else
         @click="previewOfficial = false"
         type="button"
         class="flex items-center gap-2 px-4 py-2 rounded-full bg-black/85 backdrop-blur-xl border border-amber-400 text-amber-300 font-bold text-xs sm:text-sm shadow-[0_0_20px_rgba(251,191,36,0.5)] hover:scale-105 active:scale-95 transition-all cursor-pointer"

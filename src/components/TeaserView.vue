@@ -470,6 +470,17 @@ onUnmounted(() => {
             <span class="hidden sm:inline">បញ្ជីភ្ញៀវ ({{ invitedGuests.length }})</span>
           </button>
 
+          <!-- Preview Official Page Button -->
+          <button
+            @click="$emit('view-official')"
+            type="button"
+            class="flex items-center gap-1 px-3 py-1.5 rounded-full bg-amber-400/20 hover:bg-amber-400/35 border border-amber-400/50 text-amber-300 text-xs font-semibold backdrop-blur-md transition-all cursor-pointer"
+            title="តេស្តមើលទំព័រផ្លូវការ (ក្រោយចប់ Countdown)"
+          >
+            <span class="material-symbols-outlined text-sm">visibility</span>
+            <span class="hidden md:inline">ទំព័រផ្លូវការ (ក្រោយ Countdown)</span>
+          </button>
+
           <!-- Exit Admin Button -->
           <button
             @click="exitAdmin"
