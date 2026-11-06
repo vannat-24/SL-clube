@@ -81,9 +81,6 @@ function replayIntro() {
 }
 
 function checkDateGate() {
-  const now = new Date()
-  isNov9OrLater.value = now.getTime() >= TARGET_DATE.getTime()
-
   if (typeof window !== 'undefined') {
     const params = new URLSearchParams(window.location.search)
     const isAdminParam = params.get('role') === 'admin' ||

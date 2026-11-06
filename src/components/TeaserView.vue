@@ -23,6 +23,58 @@ const testEventStarted = ref(false)
 const eventStarted = computed(() => isExpired.value || testEventStarted.value)
 let timerId = null
 
+// Background Music State
+const audioRef = ref(null)
+const isAudioPlaying = ref(false)
+const isAudioMuted = ref(false)
+
+function playBackgroundMusic() {
+  if (!audioRef.value) return
+  audioRef.value.loop = true
+  audioRef.value.volume = 0.7
+  
+  const playPromise = audioRef.value.play()
+  if (playPromise !== undefined) {
+    playPromise.then(() => {
+      isAudioPlaying.value = true
+      isAudioMuted.value = false
+    }).catch(err => {
+      console.log("Audio waiting for user gesture:", err)
+      // Auto-start on first click, touch, or scroll anywhere
+      const unlockAudio = () => {
+        if (audioRef.value && !isAudioPlaying.value && !isAudioMuted.value) {
+          audioRef.value.play().then(() => {
+            isAudioPlaying.value = true
+            isAudioMuted.value = false
+          }).catch(e => console.warn(e))
+        }
+        window.removeEventListener('click', unlockAudio)
+        window.removeEventListener('touchstart', unlockAudio)
+        window.removeEventListener('scroll', unlockAudio)
+      }
+      window.addEventListener('click', unlockAudio, { once: true })
+      window.addEventListener('touchstart', unlockAudio, { once: true })
+      window.addEventListener('scroll', unlockAudio, { once: true })
+    })
+  }
+}
+
+function toggleAudio() {
+  if (!audioRef.value) return
+  if (isAudioPlaying.value && !audioRef.value.paused) {
+    audioRef.value.pause()
+    audioRef.value.muted = true
+    isAudioPlaying.value = false
+    isAudioMuted.value = true
+  } else {
+    audioRef.value.muted = false
+    isAudioMuted.value = false
+    audioRef.value.play().then(() => {
+      isAudioPlaying.value = true
+    }).catch(e => console.warn(e))
+  }
+}
+
 function updateCountdown() {
   const now = new Date().getTime()
   const target = props.targetDate.getTime()
@@ -396,6 +448,7 @@ onMounted(() => {
   checkRoleAndParams()
   updateCountdown()
   timerId = setInterval(updateCountdown, 1000)
+  playBackgroundMusic()
   if (typeof window !== 'undefined') {
     window.addEventListener('keydown', handleKeyDown)
   }
@@ -403,6 +456,9 @@ onMounted(() => {
 
 onUnmounted(() => {
   if (timerId) clearInterval(timerId)
+  if (audioRef.value) {
+    audioRef.value.pause()
+  }
   if (typeof window !== 'undefined') {
     window.removeEventListener('keydown', handleKeyDown)
     if (typeof document !== 'undefined') {
@@ -414,6 +470,8 @@ onUnmounted(() => {
 
 <template>
   <div class="relative w-full min-h-screen bg-[#08080a] text-slate-100 overflow-x-hidden selection:bg-amber-400 selection:text-black">
+    <!-- ================= AUDIO PLAYER (LOOPING BACKGROUND MUSIC) ================= -->
+    <audio ref="audioRef" src="/bg-music.mp3" loop preload="auto" playsinline></audio>
     <!-- ================= FIXED BACKGROUND VIDEO LAYER ================= -->
     <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden">
       <video
@@ -502,6 +560,28 @@ onUnmounted(() => {
             <span>បើកសម្ពោធ៖ ថ្ងៃទី ០៩ វិច្ឆិកា</span>
           </div>
         </template>
+
+        <!-- Audio Mute / Unmute Button in Header -->
+        <button
+          @click="toggleAudio"
+          type="button"
+          class="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full backdrop-blur-md transition-all cursor-pointer shadow-md hover:scale-105 active:scale-95 border"
+          :class="isAudioPlaying && !isAudioMuted ? 'bg-amber-400/20 border-amber-400/60 text-amber-300' : 'bg-white/10 border-white/20 text-slate-400 hover:text-white'"
+          :title="isAudioPlaying && !isAudioMuted ? 'ចុចដើម្បីបិទសំឡេង (Mute)' : 'ចុចដើម្បីបើកសំឡេង (Unmute)'"
+        >
+          <span class="material-symbols-outlined text-base" :class="isAudioPlaying && !isAudioMuted ? 'text-amber-300' : 'text-slate-400'">
+            {{ isAudioPlaying && !isAudioMuted ? 'volume_up' : 'volume_off' }}
+          </span>
+          <!-- Mini Equalizer bars when playing -->
+          <div v-if="isAudioPlaying && !isAudioMuted" class="flex items-end gap-0.5 h-3 px-0.5">
+            <span class="w-0.5 bg-amber-400 rounded-full animate-[bounce_0.8s_infinite] h-2"></span>
+            <span class="w-0.5 bg-amber-300 rounded-full animate-[bounce_1.2s_infinite] h-3"></span>
+            <span class="w-0.5 bg-amber-400 rounded-full animate-[bounce_0.6s_infinite] h-1.5"></span>
+          </div>
+          <span class="text-[11px] font-bold hidden md:inline font-['Kantumruy_Pro',sans-serif]">
+            {{ isAudioPlaying && !isAudioMuted ? 'តន្ត្រី' : 'បិទសំឡេង' }}
+          </span>
+        </button>
       </div>
     </header>
 
@@ -1740,5 +1820,42 @@ onUnmounted(() => {
         </div>
       </div>
     </Transition>
+
+    <!-- ================= FLOATING VIP SOUND CONTROLLER (ជាប់អេក្រង់ខាងក្រោម) ================= -->
+    <div class="fixed bottom-6 right-5 sm:bottom-8 sm:right-8 z-50 flex items-center">
+      <button
+        @click="toggleAudio"
+        type="button"
+        class="group relative flex items-center gap-2 px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-full backdrop-blur-2xl transition-all duration-300 cursor-pointer shadow-2xl hover:scale-110 active:scale-95 border select-none"
+        :class="isAudioPlaying && !isAudioMuted
+          ? 'bg-black/90 border-amber-400/70 text-amber-300 shadow-[0_0_30px_rgba(251,191,36,0.45)]'
+          : 'bg-black/85 border-white/20 text-slate-400 hover:border-amber-400/50 hover:text-white shadow-[0_4px_20px_rgba(0,0,0,0.8)]'"
+        :title="isAudioPlaying && !isAudioMuted ? 'ចុចដើម្បីបិទសំឡេង (Mute)' : 'ចុចដើម្បីចាក់សំឡេងឡើងវិញ (Unmute)'"
+      >
+        <!-- Ambient pulsating ring when playing -->
+        <span
+          v-if="isAudioPlaying && !isAudioMuted"
+          class="absolute -inset-1 rounded-full bg-amber-400/20 blur-sm animate-pulse pointer-events-none"
+        ></span>
+
+        <!-- Icon -->
+        <span class="material-symbols-outlined text-lg sm:text-xl transition-transform group-hover:scale-110" :class="isAudioPlaying && !isAudioMuted ? 'text-amber-400' : 'text-slate-400'">
+          {{ isAudioPlaying && !isAudioMuted ? 'volume_up' : 'volume_off' }}
+        </span>
+
+        <!-- Equalizer Bars when playing -->
+        <div v-if="isAudioPlaying && !isAudioMuted" class="flex items-end gap-0.5 h-3.5 px-0.5">
+          <span class="w-0.5 bg-amber-400 rounded-full animate-[bounce_0.8s_infinite] h-2"></span>
+          <span class="w-0.5 bg-amber-300 rounded-full animate-[bounce_1.2s_infinite] h-3.5"></span>
+          <span class="w-0.5 bg-amber-400 rounded-full animate-[bounce_0.6s_infinite] h-2.5"></span>
+          <span class="w-0.5 bg-amber-200 rounded-full animate-[bounce_1s_infinite] h-1.5"></span>
+        </div>
+
+        <!-- Label -->
+        <span class="text-xs sm:text-sm font-bold tracking-wide font-['Kantumruy_Pro',sans-serif]">
+          {{ isAudioPlaying && !isAudioMuted ? 'តន្ត្រី VIP' : 'បិទសំឡេង' }}
+        </span>
+      </button>
+    </div>
   </div>
 </template>
