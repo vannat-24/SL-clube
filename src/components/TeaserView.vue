@@ -692,24 +692,24 @@ onUnmounted(() => {
             WE ARE COMING SOON WITH SL CLUB BATTAMBANG
           </p>
 
-          <!-- ================= GIANT DAYS DISPLAY (ចំនួនថ្ងៃ) ================= -->
-          <div class="mt-8 sm:mt-12 relative flex flex-col items-center justify-center">
+          <!-- ================= GIANT DAYS DISPLAY (ចំនួនថ្ងៃដែលនៅសល់) ================= -->
+          <div class="mt-8 sm:mt-12 relative flex flex-col items-center justify-center w-full max-w-lg">
             <div class="absolute inset-0 bg-radial-[circle_at_50%_50%] from-amber-400/25 via-amber-500/10 to-transparent blur-3xl rounded-full scale-125"></div>
 
-            <div class="relative flex flex-col items-center p-6 sm:p-10 rounded-3xl bg-black/60 backdrop-blur-xl border border-amber-400/40 shadow-[0_0_50px_rgba(251,191,36,0.3),inset_0_0_30px_rgba(255,255,255,0.05)]">
+            <div class="relative w-full flex flex-col items-center p-6 sm:p-10 rounded-3xl bg-black/70 backdrop-blur-xl border border-amber-400/50 shadow-[0_0_50px_rgba(251,191,36,0.35),inset_0_0_30px_rgba(255,255,255,0.08)]">
               <div class="flex items-baseline justify-center">
-                <span class="text-7xl sm:text-9xl md:text-[11rem] font-black text-transparent bg-clip-text bg-gradient-to-b from-white via-amber-200 to-amber-500 font-mono tracking-tighter filter drop-shadow-[0_0_35px_rgba(251,191,36,0.6)] leading-none select-none">
+                <span class="text-8xl sm:text-[10rem] md:text-[12rem] font-black text-transparent bg-clip-text bg-gradient-to-b from-white via-amber-200 to-amber-500 font-mono tracking-tighter filter drop-shadow-[0_0_40px_rgba(251,191,36,0.7)] leading-none select-none">
                   {{ formattedDays }}
                 </span>
               </div>
 
-              <div class="mt-3 sm:mt-4 flex items-center gap-3">
+              <div class="mt-3 sm:mt-5 flex items-center gap-3">
                 <div class="h-px w-8 sm:w-16 bg-gradient-to-r from-transparent via-amber-400 to-transparent"></div>
                 <div class="flex flex-col items-center">
                   <span class="text-xl sm:text-2xl md:text-3xl font-extrabold text-amber-300 tracking-wider font-['Kantumruy_Pro',sans-serif]">
-                    {{ khmerDays }} ថ្ងៃ (ចំនួនថ្ងៃ)
+                    {{ khmerDays }} ថ្ងៃ (ចំនួនថ្ងៃដែលនៅសល់)
                   </span>
-                  <span class="text-xs sm:text-sm font-bold tracking-[0.3em] text-slate-400 uppercase font-sans">
+                  <span class="text-xs sm:text-sm font-bold tracking-[0.3em] text-slate-300 uppercase font-sans mt-0.5">
                     DAYS REMAINING
                   </span>
                 </div>
@@ -718,49 +718,62 @@ onUnmounted(() => {
             </div>
           </div>
 
-          <!-- ================= SUB-TIMER: EXACT HOURS, MINUTES, SECONDS ================= -->
-          <div class="mt-8 sm:mt-10 w-full max-w-xl">
-            <p class="text-xs sm:text-sm font-semibold text-slate-300 mb-3 flex items-center justify-center gap-1.5">
+          <!-- ================= SUB-TIMER: ថ្ងៃ, ម៉ោង, នាទី និង វិនាទី ================= -->
+          <div class="mt-8 sm:mt-10 w-full max-w-2xl px-2">
+            <p class="text-xs sm:text-sm font-semibold text-slate-300 mb-3 sm:mb-4 flex items-center justify-center gap-1.5">
               <span class="material-symbols-outlined text-base text-amber-400">timer</span>
               <span>ពេលវេលាជាក់លាក់ដែលរាប់ថយក្រោយ</span>
             </p>
 
-            <div class="grid grid-cols-3 gap-3 sm:gap-6">
-              <!-- HOURS -->
-              <div class="relative flex flex-col items-center p-3.5 sm:p-5 rounded-2xl bg-white/5 backdrop-blur-md border border-white/15 shadow-[0_4px_20px_rgba(0,0,0,0.6)] group hover:border-amber-400/50 transition-colors">
-                <span class="text-3xl sm:text-5xl md:text-6xl font-black text-white font-mono tracking-tight group-hover:text-amber-300 transition-colors">
+            <div class="grid grid-cols-4 gap-2 sm:gap-4 md:gap-5">
+              <!-- 1. ថ្ងៃ (DAYS) -->
+              <div class="relative flex flex-col items-center p-2.5 sm:p-4 md:p-5 rounded-xl sm:rounded-2xl bg-white/5 backdrop-blur-md border border-amber-400/40 shadow-[0_4px_20px_rgba(0,0,0,0.6)] group hover:border-amber-400/80 transition-all hover:scale-105">
+                <span class="text-2xl sm:text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-amber-300 font-mono tracking-tight leading-none">
+                  {{ formattedDays }}
+                </span>
+                <span class="mt-1 sm:mt-2 text-[10px] sm:text-xs md:text-sm font-bold text-amber-300 whitespace-nowrap font-['Kantumruy_Pro',sans-serif]">
+                  {{ khmerDays }} ថ្ងៃ
+                </span>
+                <span class="text-[8px] sm:text-[10px] tracking-wider text-slate-400 uppercase font-sans mt-0.5">
+                  DAYS
+                </span>
+              </div>
+
+              <!-- 2. ម៉ោង (HOURS) -->
+              <div class="relative flex flex-col items-center p-2.5 sm:p-4 md:p-5 rounded-xl sm:rounded-2xl bg-white/5 backdrop-blur-md border border-white/15 shadow-[0_4px_20px_rgba(0,0,0,0.6)] group hover:border-amber-400/50 transition-all hover:scale-105">
+                <span class="text-2xl sm:text-4xl md:text-5xl font-black text-white font-mono tracking-tight leading-none group-hover:text-amber-300 transition-colors">
                   {{ formattedHours }}
                 </span>
-                <span class="mt-1 text-xs sm:text-sm font-bold text-amber-400">
+                <span class="mt-1 sm:mt-2 text-[10px] sm:text-xs md:text-sm font-bold text-amber-400 whitespace-nowrap font-['Kantumruy_Pro',sans-serif]">
                   {{ khmerHours }} ម៉ោង
                 </span>
-                <span class="text-[9px] sm:text-[10px] tracking-wider text-slate-400 uppercase">
+                <span class="text-[8px] sm:text-[10px] tracking-wider text-slate-400 uppercase font-sans mt-0.5">
                   HOURS
                 </span>
               </div>
 
-              <!-- MINUTES -->
-              <div class="relative flex flex-col items-center p-3.5 sm:p-5 rounded-2xl bg-white/5 backdrop-blur-md border border-white/15 shadow-[0_4px_20px_rgba(0,0,0,0.6)] group hover:border-amber-400/50 transition-colors">
-                <span class="text-3xl sm:text-5xl md:text-6xl font-black text-white font-mono tracking-tight group-hover:text-amber-300 transition-colors">
+              <!-- 3. នាទី (MINUTES) -->
+              <div class="relative flex flex-col items-center p-2.5 sm:p-4 md:p-5 rounded-xl sm:rounded-2xl bg-white/5 backdrop-blur-md border border-white/15 shadow-[0_4px_20px_rgba(0,0,0,0.6)] group hover:border-amber-400/50 transition-all hover:scale-105">
+                <span class="text-2xl sm:text-4xl md:text-5xl font-black text-white font-mono tracking-tight leading-none group-hover:text-amber-300 transition-colors">
                   {{ formattedMinutes }}
                 </span>
-                <span class="mt-1 text-xs sm:text-sm font-bold text-amber-400">
+                <span class="mt-1 sm:mt-2 text-[10px] sm:text-xs md:text-sm font-bold text-amber-400 whitespace-nowrap font-['Kantumruy_Pro',sans-serif]">
                   {{ khmerMinutes }} នាទី
                 </span>
-                <span class="text-[9px] sm:text-[10px] tracking-wider text-slate-400 uppercase">
+                <span class="text-[8px] sm:text-[10px] tracking-wider text-slate-400 uppercase font-sans mt-0.5">
                   MINUTES
                 </span>
               </div>
 
-              <!-- SECONDS -->
-              <div class="relative flex flex-col items-center p-3.5 sm:p-5 rounded-2xl bg-white/5 backdrop-blur-md border border-white/15 shadow-[0_4px_20px_rgba(0,0,0,0.6)] group hover:border-amber-400/50 transition-colors">
-                <span class="text-3xl sm:text-5xl md:text-6xl font-black text-amber-400 font-mono tracking-tight animate-pulse">
+              <!-- 4. វិនាទី (SECONDS) -->
+              <div class="relative flex flex-col items-center p-2.5 sm:p-4 md:p-5 rounded-xl sm:rounded-2xl bg-white/5 backdrop-blur-md border border-white/15 shadow-[0_4px_20px_rgba(0,0,0,0.6)] group hover:border-amber-400/50 transition-all hover:scale-105">
+                <span class="text-2xl sm:text-4xl md:text-5xl font-black text-amber-400 font-mono tracking-tight leading-none animate-pulse">
                   {{ formattedSeconds }}
                 </span>
-                <span class="mt-1 text-xs sm:text-sm font-bold text-amber-400">
+                <span class="mt-1 sm:mt-2 text-[10px] sm:text-xs md:text-sm font-bold text-amber-400 whitespace-nowrap font-['Kantumruy_Pro',sans-serif]">
                   {{ khmerSeconds }} វិនាទី
                 </span>
-                <span class="text-[9px] sm:text-[10px] tracking-wider text-slate-400 uppercase">
+                <span class="text-[8px] sm:text-[10px] tracking-wider text-slate-400 uppercase font-sans mt-0.5">
                   SECONDS
                 </span>
               </div>
