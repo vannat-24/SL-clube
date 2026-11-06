@@ -1093,6 +1093,96 @@ onUnmounted(() => {
             </div>
           </div>
 
+          <!-- ================= 4. LETTER OF GRATITUDE / APPRECIATION (លិខិតថ្លែងអំណរគុណដល់ភ្ញៀវដែលបានចូលរួម) ================= -->
+          <div class="mt-14 sm:mt-20 w-full max-w-4xl mx-auto">
+            <div class="relative w-full rounded-2xl sm:rounded-3xl p-6 sm:p-10 md:p-12 bg-gradient-to-b from-[#15130f] via-[#0d0d12] to-[#08080b] border-2 border-amber-400/40 shadow-[0_20px_60px_rgba(0,0,0,0.9),0_0_35px_rgba(251,191,36,0.15)] overflow-hidden text-center group">
+
+              <!-- Ambient Radial Gold Background Glow -->
+              <div class="absolute -top-32 left-1/2 -translate-x-1/2 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+              <div class="absolute -bottom-32 left-1/2 -translate-x-1/2 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl pointer-events-none"></div>
+
+              <!-- Corner Golden Rivets / Brackets -->
+              <div class="absolute top-3 left-3 w-4 h-4 border-t-2 border-l-2 border-amber-400/80 pointer-events-none"></div>
+              <div class="absolute top-3 right-3 w-4 h-4 border-t-2 border-r-2 border-amber-400/80 pointer-events-none"></div>
+              <div class="absolute bottom-3 left-3 w-4 h-4 border-b-2 border-l-2 border-amber-400/80 pointer-events-none"></div>
+              <div class="absolute bottom-3 right-3 w-4 h-4 border-b-2 border-r-2 border-amber-400/80 pointer-events-none"></div>
+
+              <!-- Top Emblem Badge -->
+              <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-400/10 border border-amber-400/40 text-amber-300 text-xs sm:text-sm font-bold tracking-widest uppercase shadow-md mb-4">
+                <span class="material-symbols-outlined text-base">sentiment_very_satisfied</span>
+                <span>លិខិតថ្លែងអំណរគុណ • LETTER OF GRATITUDE</span>
+                <span class="material-symbols-outlined text-base">auto_awesome</span>
+              </div>
+
+              <!-- Main Heading -->
+              <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-100 font-['Kantumruy_Pro','Battambang',sans-serif] tracking-wide mb-2 drop-shadow-[0_2px_15px_rgba(251,191,36,0.4)]">
+                លិខិតថ្លែងអំណរគុណដ៏ជ្រាលជ្រៅ
+              </h2>
+              <p class="text-[11px] sm:text-xs font-semibold tracking-[0.3em] text-slate-300 uppercase font-sans mb-6">
+                WITH SINCEREST APPRECIATION &amp; RESPECT
+              </p>
+
+              <!-- Addressee / Guest Name Box -->
+              <div class="w-full max-w-xl mx-auto py-3.5 px-5 rounded-xl bg-white/5 border border-amber-400/30 backdrop-blur-md mb-6 shadow-inner">
+                <p class="text-xs sm:text-sm text-amber-200/90 font-['Kantumruy_Pro',sans-serif]">
+                  សូមថ្លែងអំណរគុណយ៉ាងជ្រាលជ្រៅ និងស្មោះស្ម័គ្របំផុតចំពោះ៖
+                </p>
+                <p class="text-base sm:text-xl md:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-white to-amber-300 font-['Kantumruy_Pro','Battambang',sans-serif] mt-1 drop-shadow-[0_0_12px_rgba(251,191,36,0.6)]">
+                  {{ guestName ? `ឯកឧត្តម លោកជំទាវ លោក លោកស្រី ${guestName}` : 'ឯកឧត្តម លោកជំទាវ លោក លោកស្រី ភ្ញៀវកិត្តិយសទាំងអស់' }}
+                </p>
+              </div>
+
+              <!-- Khmer Formal Gratitude Body Text -->
+              <div class="max-w-2xl mx-auto space-y-4 text-xs sm:text-sm md:text-base text-slate-200 leading-relaxed font-['Kantumruy_Pro',sans-serif] text-justify sm:text-center">
+                <p>
+                  គណៈគ្រប់គ្រង និងបុគ្គលិកទាំងអស់នៃ <strong class="text-amber-300 font-bold">SL CLUB BATTAMBANG</strong> សូមសម្ដែងនូវសេចក្ដីសោមនស្សរីករាយ និងអំណរគុណយ៉ាងជ្រាលជ្រៅបំផុតចំពោះ វត្តមានដ៏ឧត្ដុង្គឧត្ដម និងថ្លៃថ្លារបស់ ឯកឧត្តម លោកជំទាវ លោក លោកស្រី ដែលបានផ្ដល់កិត្តិយសអញ្ជើញចូលរួមក្នុង <strong class="text-white">"រាត្រីបើកសម្ពោធជាផ្លូវការ VIP GRAND OPENING GALA NIGHT"</strong>។
+                </p>
+                <p class="text-slate-300">
+                  វត្តមានដ៏មានតម្លៃរបស់លោកអ្នក មិនត្រឹមតែជាកិត្តិយសដ៏ធំធេងសម្រាប់ក្លឹបយើងខ្ញុំប៉ុណ្ណោះទេ ប៉ុន្តែថែមទាំងជាកម្លាំងចិត្ត និងជាសក្ខីភាពបញ្ជាក់ពីចំណងមិត្តភាព និងការគាំទ្រដ៏វិសេសវិសាល ដែលជំរុញឱ្យ SL CLUB ប្តេជ្ញាផ្តល់នូវសេវាកម្មកម្សាន្ត បដិសណ្ឋារកិច្ច និងបទពិសោធន៍លំដាប់ប្រណិតកម្រិតកំពូល។
+                </p>
+                <p class="text-amber-200/95 font-medium pt-3 border-t border-amber-400/20">
+                  យើងខ្ញុំសូមបួងសួងដល់គុណបុណ្យព្រះរតនត្រ័យ និងវត្ថុស័ក្តិសិទ្ធិក្នុងលោក សូមតាមជួយបីបាច់ថែរក្សា និងប្រសិទ្ធពរជ័យ សិរីសួស្តី ជ័យមង្គល វិបុលសុខ បវរមហាប្រសើរគ្រប់ប្រការ ជូនចំពោះលោកអ្នក និងក្រុមគ្រួសារ ព្រមទាំងសមប្រកបដោយពុទ្ធពរទាំងបួនប្រការគឺ៖ <span class="text-amber-300 font-bold">អាយុ វណ្ណៈ សុខៈ ពលៈ</span> កុំបីឃ្លៀងឃ្លាតឡើយ។
+                </p>
+              </div>
+
+              <!-- Sign-off & Seal Footer -->
+              <div class="mt-8 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-6 max-w-xl mx-auto w-full">
+                <!-- Date & City -->
+                <div class="flex flex-col items-center sm:items-start text-center sm:text-left">
+                  <span class="text-[11px] sm:text-xs text-slate-400">ធ្វើនៅ បាត់ដំបង</span>
+                  <span class="text-xs sm:text-sm font-semibold text-slate-200 mt-0.5">
+                    ថ្ងៃចន្ទ ទី ០៩ ខែ វិច្ឆិកា ឆ្នាំ ២០២៦
+                  </span>
+                  <span class="text-[10px] text-amber-400/80 font-mono mt-0.5 tracking-wider">
+                    MONDAY, 09 NOVEMBER 2026
+                  </span>
+                </div>
+
+                <!-- Official Verification Stamp -->
+                <div class="flex items-center gap-3">
+                  <div class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full border-2 border-dashed border-amber-400/70 p-1 flex items-center justify-center bg-black/60 shadow-[0_0_20px_rgba(251,191,36,0.3)]">
+                    <div class="w-full h-full rounded-full border border-amber-400/40 flex flex-col items-center justify-center text-center p-0.5">
+                      <span class="text-[7px] text-amber-300 font-bold tracking-tighter uppercase leading-none">SL CLUB</span>
+                      <span class="material-symbols-outlined text-amber-400 text-base my-0.5">verified</span>
+                      <span class="text-[6px] text-amber-300/80 tracking-tighter uppercase leading-none">OFFICIAL SEAL</span>
+                    </div>
+                  </div>
+
+                  <div class="flex flex-col text-left">
+                    <span class="text-[10px] sm:text-[11px] text-slate-400 uppercase tracking-wider">ដោយសេចក្ដីគោរព និងរាប់អានដ៏ខ្ពង់ខ្ពស់</span>
+                    <span class="text-xs sm:text-sm font-bold text-amber-300 font-['Kantumruy_Pro',sans-serif] mt-0.5">
+                      គណៈគ្រប់គ្រង SL CLUB BATTAMBANG
+                    </span>
+                    <span class="text-[10px] text-slate-400 tracking-wide font-sans">
+                      The Management of SL CLUB
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
           <!-- ================= ACTION & SOCIAL BUTTONS ================= -->
           <div class="mt-14 sm:mt-16 flex flex-wrap items-center justify-center gap-3 sm:gap-4 w-full">
             <button
